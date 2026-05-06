@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.3.0 — 2026-05-06
+
+Token efficiency pass + performance playbook.
+
+### Aggiunte
+
+- **`docs/PERFORMANCE.md`** — playbook completo con 10 raccomandazioni quantitative basate sulle linee guida ufficiali Anthropic (skills best practices, prompt caching, Memory tool, context management) e benchmark fine 2025.
+- **`steps/red-flags.md`** — lista anti-pattern e regole bloccanti, caricabile on-demand.
+- **`steps/step-0-resume.md`** — dettaglio completo del menu di selezione e ripresa, prima inline in SKILL.md.
+- **`steps/step-1-questions.md`** — dettaglio completo delle 10–11 domande, opzioni, default per tipologia, regole mock/online.
+- **`steps/code-snippets.md`** — regole code snippet handling per Step 4, prima inline.
+- **Sezione "Sub-agent delegation policy"** in SKILL.md — quando delegare e quando no, con riferimento al playbook.
+
+### Modifiche
+
+- **`SKILL.md` da ~9.8k a ~7.3k token** (-25%) tramite progressive disclosure:
+  - Step 0 (resume check): 70 righe → 12 righe (dettaglio in `steps/step-0-resume.md`)
+  - Step 1 (questions): 65 righe → 20 righe (dettaglio in `steps/step-1-questions.md`)
+  - Step 4 (code snippet handling): 16 righe → 1 riga (dettaglio in `steps/code-snippets.md`)
+  - Red Flags: 30 righe → 3 righe (dettaglio in `steps/red-flags.md`)
+- **`README.md`** — sezione Performance con numeri chiave e link al playbook.
+
+### Note di migrazione
+
+Nessuna breaking change. Le sessioni esistenti continuano a funzionare. Step file nuovi vengono caricati on-demand dalla skill quando servono.
+
 ## 2.2.0 — 2026-05-06
 
 Riorganizzazione architetturale + onboarding migliorato + test automatici.

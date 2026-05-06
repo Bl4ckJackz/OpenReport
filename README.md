@@ -164,6 +164,16 @@ Vedi [`examples/`](./examples/) — output reali della skill (anonimizzati) per 
 
 [MIT](./LICENSE) — Copyright (c) 2026 Dominik Duda.
 
+## Performance
+
+Vedi [`docs/PERFORMANCE.md`](./docs/PERFORMANCE.md) — playbook su token efficiency, prompt caching, model routing per fase, sub-agent policy, e quando attivare la Memory tool ufficiale o la Batch API.
+
+Numeri chiave:
+
+- `SKILL.md` body: ~530 righe (~7.3k token caricati per turno)
+- Knowledge graph hash-128 in `.session/knowledge/` riduce re-read del 60–80%
+- Sub-agent solo per output verboso (>5k righe) o parallelizzazione genuina (4+ task indipendenti) — costo startup ~20k token
+
 ## Test
 
 ```bash

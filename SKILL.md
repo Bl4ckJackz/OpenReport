@@ -119,147 +119,51 @@ digraph relazione_flow {
 
 ## Step 0 — Auto-resume check (SEMPRE all'avvio)
 
-Prima di qualsiasi domanda, cerca tutte le cartelle `relazioni*/` e relativi state:
+Prima di qualsiasi domanda:
 
 ```
 Glob: relazioni*/.session/session-state.json
-Glob: relazioni*/                                  # cartelle anche senza .session/
+Glob: relazioni*/
 ```
 
-Classifica i risultati:
-- **In-progress** — state esiste con `"status": "in-progress"`
-- **Completed** — state esiste con `"status": "completed"`
-- **Orphan** — cartella `relazioni*/` senza `.session/session-state.json` (es. backup manuale, sessione interrotta senza state)
-
-### Decisione
+Classifica: **In-progress** (`status=in-progress` o `ready-for-approval`), **Completed/Approved**, **Orphan** (cartella senza `.session/`).
 
 | Situazione | Comportamento |
 |---|---|
-| 0 cartelle | Procedi con Step 1 (nuova sessione) |
-| 1 cartella in-progress | Mostra riepilogo + `AskUserQuestion` (Riprendi / Nuova / Abbandona) |
-| ≥ 2 cartelle (di qualsiasi stato) | **Menu di selezione** (sotto) |
-| 1 cartella completed, 0 in-progress | Segnala esistenza, `AskUserQuestion` (Nuova / Apri esistente) |
+| 0 cartelle | Procedi a Step 1 (nuova sessione) |
+| 1 in-progress | `AskUserQuestion` (Riprendi / Nuova / Abbandona) |
+| ≥ 2 cartelle | Menu di selezione (vedi `steps/step-0-resume.md`) |
+| 1 completed, 0 in-progress | `AskUserQuestion` (Nuova / Apri esistente) |
 
-### Menu di selezione (≥ 2 cartelle)
+**Su sessione esistente caricata:** valida state contro schema, mostra menu di ripresa guidato (Riprendi / Apri-e-decidi-insieme / Dashboard / Cambia risposta Step 1 / Salta a step). Dettagli completi in `steps/step-0-resume.md`.
 
-Usa **UNA sola `AskUserQuestion`** con le cartelle ordinate per `last_updated_at` desc (più recenti prima). Ogni opzione include:
+**Slash commands correlati:** `/relazione-continua` (resume esplicito), `/relazione-rollback` (ripristino backup), `/relazione-stats` (dashboard), `/relazione-approve` (Step 9), `/relazione-doctor` (diagnostica), `/relazione-setup` (wizard primo uso).
 
-- Icona di stato: `[IN CORSO]` / `[OK]` / `[?]` per orphan
-- Nome cartella
-- Tipologia (se presente in state)
-- Step corrente (se presente)
-- Ultima modifica (formato `YYYY-MM-DD HH:MM`)
-- Titolo cover (se presente, troncato a 40 char)
+## Quick mode
 
-Esempio opzioni:
-```
-[IN CORSO] relazioni/              — tecnica · step-4-ready · 2026-04-15 · "Virtual Retail..."
-[IN CORSO] relazioni-2026-04-10/   — tesi · step-6-refining · 2026-04-12 · "Tesi magistrale..."
-[OK]       relazioni-2026-03-28/   — stage · completed · 2026-03-29 · "Relazione di stage"
-[?]        relazioni-BACKUP-xxx/   — (nessuno state, orphan)
---- Azioni ---
-Avvia nuova sessione (ignora esistenti)
-Abbandona una sessione (rinomina BACKUP-<ts>)
-```
-
-Se più di 4 cartelle, usa "Other" per le meno recenti.
-
-### Dopo la selezione
-
-1. **Se sessione in-progress / ready-for-approval scelta**: **valida** state contro `schemas/session-state.schema.json` (manca `skill_version`/`current_step` → state vecchio, vedi `steps/backup-and-versioning.md`). Carica `answers`, mostra **menu di ripresa guidato** (sotto), poi salta domande risposte e jump a `current_step` salvato.
-2. **Se sessione approved/completed scelta**: `AskUserQuestion` (Apri in lettura / Duplica in nuova cartella / Modifica in loco — crea nuova versione `1.x`). Mai sovrascrivere file approved.
-3. **Se orphan scelta**: avvisa "nessuno state trovato" e chiedi (Ricostruisci state dai file / Rinomina in BACKUP e nuova / Ignora).
-4. **Se "Nuova sessione"**: procedi Step 1 (le esistenti restano intatte).
-5. **Se "Abbandona"**: secondo `AskUserQuestion` per scegliere quale, rinomina con `BACKUP-<ISO>`, poi torna al menu.
-
-### Menu di ripresa guidato (`/relazione-continua` o sessione esistente scelta)
-
-Subito dopo aver caricato lo state, mostra **UNA `AskUserQuestion`** con queste opzioni (in quest'ordine):
-
-1. **Riprendi da dove eravamo** *(default — più frequente)* — salta a `current_step` salvato e prosegui il flow
-2. **Apri il file e decidiamo insieme cosa modificare** *(opzione libera)* — Read del file di output principale (`RELAZIONE.md` o `.tex`), Read di `.session/scan-summary.md`, poi prompt aperto: «Ho riletto la relazione. Dimmi liberamente cosa vuoi cambiare (sezioni da riscrivere, dati da aggiornare, tono, lunghezza, ecc.) e procediamo.» — l'orchestratore aspetta input libero, NON una scelta strutturata
-3. **Mostra dashboard sessione** — riepilogo `relazione-stats` per la sessione (file scritti, mock residui, self-check, layout-check, status)
-4. **Cambia una risposta del Step 1** — ri-apri una delle 9 domande iniziali e ri-genera dalle parti dipendenti
-5. **Salta a uno step specifico** *(avanzato)* — `AskUserQuestion` con elenco step dispari (4-draft, 5-followup, 7-export, ecc.)
-
-L'opzione 2 è **specificamente progettata per lavoro guidato** in cui l'utente non sa ancora quali modifiche vuole — la skill legge il file, si prepara, e poi l'utente parla a ruota libera. Non chiedere altre domande prima di aver fatto Read del file.
-
-**Slash commands correlati:** `/relazione-continua` (resume esplicito — stessa logica menu), `/relazione-rollback` (ripristino backup), `/relazione-stats` (dashboard), `/relazione-approve` (Step 9 finalizzazione).
-
-## Quick mode (entry path alternativo)
-
-Se invocato come `/relazione-quick` o con `--profile=<nome>`:
-
-1. Carica preset da `presets/<nome>.yaml` se presente
-2. Auto-detect tipologia da nome cartella (vedi `~/.claude/commands/relazione-quick.md` per mapping)
-3. Compila `answers` con default
-4. Mostra le scelte all'utente con un solo `AskUserQuestion` di conferma:
-   - `Conferma e procedi` → vai direttamente a Step 2
-   - `Modifica` → mostra le 9 domande standard
-5. Resto identico
-
-Vedi `steps/profiles.md` per schema preset e auto-detect.
+Se invocato come `/relazione-quick` o con `--profile=<nome>`: carica preset, auto-detect tipologia da nome cartella, compila `answers` con default, una sola `AskUserQuestion` di conferma. Dettagli in `steps/step-0-resume.md` § Quick mode e `steps/profiles.md`.
 
 ## Step 1 — Initial Questions
 
-**USA SEMPRE `AskUserQuestion`**, mai testo libero. 10 domande in 4 batch:
+**USA SEMPRE `AskUserQuestion`**, mai testo libero. **10–11 domande in 4–5 batch** (Batch 5 condizionale a presenza di codice nella cwd).
 
-**Batch 1 (4 domande):**
-1. Tipologia — `progetto`, `tecnica`, `tesi`, `stage` (altre 8 via "Other": laboratorio, codice, analisi-codice, bug, finale, ricerca, esperienza, custom)
-2. Lingua — `italiano`, `inglese`
-3. Stile — `formale accademico`, `semi-formale aziendale`, `tecnico divulgativo`, `narrativo personale`
-4. Destinatario — `docente / commissione`, `azienda / committente`, `team interno`, `pubblico generico`
+Mappa sintetica delle domande:
 
-**Batch 2 (4 domande):**
-5. Lunghezza — `corta (5-15 pp)`, `media (15-40)`, `lunga (40-80)`, `molto lunga (80+)` (Other per numero esatto)
-6. Elementi visivi (multiSelect) — `tabelle`, `schemi/diagrammi`, `grafici di dati`, `nessuno`
-7. Formato — `md`, `latex`, `both` (suggerisci default in base a tipologia, vedi Quick Reference)
-8. Mock data — `no-placeholder`, `sì-mock`
+| # | Domanda | Salva in `answers.` |
+|---|---|---|
+| 1 | Tipologia (12 opzioni) | `tipologia` |
+| 2 | Lingua (it/en) | `lingua` |
+| 3 | Stile registro | `stile` |
+| 4 | Destinatario | `destinatario` |
+| 5 | Lunghezza (4 fasce + Other) | `pages` |
+| 6 | Elementi visivi (multi) | `visivi` |
+| 7 | Formato (md/latex/both) | `formato` |
+| 8 | Mock data (sì/no) | `mock` |
+| 9 | Ricerca online (online/locale) | `ricerca_online` |
+| 10 | Scan mode (rapido/profondo) — solo se >15 file | `scan_mode` |
+| 11 | Code snippet — solo se `cwd_has_source_code` | `code_snippets` |
 
-**Batch 3 (1 domanda):**
-9. Ricerca online — `online (raccomandato per tesi/ricerca/progetto/analisi-codice)`, `solo-locale`
-
-**Batch 4 (1 domanda — solo se stima file > 15 o `--scan=deep`):**
-10. Modalità scan — `rapido (single-pass, default < 15 file)`, `profondo-parallelo (4 agenti + hybrid store, raccomandato per progetti grandi — vedi steps/step-2-parallel.md)`
-
-Se < 15 file scansionabili, salta la domanda 10 e imposta `scan_mode: "rapido"` automaticamente.
-
-**Pre-flight code detection (eseguito prima di Batch 5):**
-
-Esegui Glob per file sorgente nella cwd con i pattern:
-```
-**/*.{ts,tsx,js,jsx,mjs,cjs,py,go,rs,dart,java,kt,swift,rb,php,c,cpp,cc,h,hpp,scala,clj,ex,exs,vue,svelte,sql,prisma}
-```
-Considera "presenza di codice" se Glob ritorna ≥ 5 file (escludendo automaticamente `node_modules`, `.next`, `dist`, `build`, `.git`, `vendor`, `target`, `__pycache__`, `venv`, `.venv`, `coverage`).
-
-Salva il flag `cwd_has_source_code: true|false` in memoria locale. Usalo per attivare Batch 5.
-
-**Batch 5 (1 domanda — solo se `cwd_has_source_code = true`):**
-11. Snippet di codice nella relazione — `no (relazione neutra, nessun code block)`, `sì-mirato (4-6 snippet nelle sezioni più rilevanti)`, `sì-estensivo (10+ snippet in tutte le sotto-sezioni rilevanti + firme TS in Appendice B)`, `solo-appendice (firme/snippet concentrati in Appendice B, corpo testo neutro)`
-
-**Default in base a tipologia** (proponi come prima opzione "Recommended"):
-- `tecnica`, `codice`, `analisi-codice`, `bug`, `spec-tecnica`, `runbook`, `incident-postmortem` → `sì-estensivo`
-- `progetto`, `tesi`, `ricerca`, `stage`, `finale`, `whitepaper`, `case-study`, `handover` → `sì-mirato`
-- `esperienza`, `laboratorio`, `status-report` → `solo-appendice`
-- `proposta`, `rfp-response`, `sow`, `business-case`, `audit-report`, `compliance-report` → `no`
-
-Se `cwd_has_source_code = false`, salta Batch 5 e imposta `code_snippets: "no"` automaticamente in `answers`. Salva la risposta in `answers.code_snippets`.
-
-**Se `latex` o `both`**, terza chiamata aggiuntiva:
-- Classe documento: `article`, `report`, `book`
-- Stile bibliografico: `bibtex`, `biblatex+biber`, `nessuna`
-- Template: `default`, `ho un template da fornire`
-
-**Se "Other" su tipologia → `custom`**: chiedi struttura desiderata in chat libera.
-
-**Mock rules sintetiche** (dettaglio in `steps/forbidden-terms.md` e Quick Reference):
-- `sì-mock`: dati realistici marcati `[MOCK]`, listati in "Nota metodologica" finale
-- `no-placeholder`: `[DA COMPLETARE: <cosa>]` ovunque manca info
-- **MAI mockare** (anche con sì-mock): nomi di persone reali, bibliografia, DOI/URL, dati fiscali, citazioni dirette, metriche dichiarate misurate
-
-**Online rules sintetiche** (dettaglio in `steps/step-3.5-research.md`):
-- `online`: WebSearch/WebFetch attivi per stato dell'arte, algoritmi, librerie, standard, bibliografia
-- `solo-locale`: ZERO chiamate web. Citazioni non recuperabili dai file → `[RIFERIMENTO DA VERIFICARE]`
+**Vedi `steps/step-1-questions.md`** per: opzioni complete di ciascuna domanda, default per tipologia, pre-flight code detection, regole mock, regole online, follow-up LaTeX (classe doc + bib).
 
 **Salva tutte le risposte in `answers` di session-state.json.**
 
@@ -385,20 +289,7 @@ Heuristic: ~400 parole per pagina A4.
 - `sì-mock`: riempi con dati realistici, marca prima occorrenza con `[MOCK]` (md) o `\textcolor{orange}{[MOCK]}` / commento `% MOCK` (tex). Append a `mock_inventory[]` in state.
 - `no-placeholder`: `[DA COMPLETARE: <cosa>]` ovunque, mai mockare.
 
-**Code snippet handling (basato su `answers.code_snippets`):**
-- `no` → nessun code block nel draft, descrivi i moduli solo a parole
-- `sì-mirato` → estrai 4-6 snippet brevi (10-30 righe ciascuno) dai file più rappresentativi della tipologia, inseriscili in fenced code block con language hint, alla fine della sotto-sezione di pertinenza. Privilegia: pure functions testabili, formule matematiche, pattern di sicurezza (CSP, JWT), funzioni di calcolo, indici DB unici parziali, SQL migration significative
-- `sì-estensivo` → 10+ snippet distribuiti su tutte le sotto-sezioni rilevanti dell'implementazione (§7.2 in tipologia `progetto`, equivalente in altre), più Appendice "Firme di interfaccia" carica con firme TypeScript/Python/Dart dei moduli chiave. Mantieni gli snippet sotto le 60 righe ciascuno
-- `solo-appendice` → corpo testo §implementazione neutro (descrizioni a parole, senza code block), Appendice dedicata carica con firme + 1-2 snippet di riferimento per modulo chiave
-
-Regole comuni a `sì-*` e `solo-appendice`:
-- Estrai esclusivamente da file realmente esistenti nella cwd (verifica con Read), MAI inventare codice che non esiste
-- Specifica sempre il path di provenienza prima del code block: «L'estratto seguente, dal modulo `<path>`, mostra/illustra ...»
-- Riduci il codice estratto eliminando dettagli accessori (commenti verbosi, edge case minori), ma preserva la struttura essenziale e l'attribuzione
-- Mai includere secret/API key/IP esposti — applica masking se necessario (gestito poi anche da `scripts/security/secret-scan.sh` in Step 6.5)
-- Linguaggio fenced code block: usa il language hint corretto (`typescript`, `python`, `dart`, `sql`, `rust`, `go`, ecc.) per abilitare syntax highlight nel PDF (eisvogel + listings)
-- Preferisci snippet che illustrano una decisione (es. perché si è scelto X), un pattern non banale, o una formula citata in §3 stato dell'arte
-- Aggiungi gli snippet a `files_written[]` solo se vivono in file separati; altrimenti restano inline nel `RELAZIONE.md`
+**Code snippet handling:** vedi `steps/code-snippets.md` per regole complete in base ad `answers.code_snippets` (`no` / `sì-mirato` / `sì-estensivo` / `solo-appendice`) e regole comuni (path di provenienza, mai inventare, masking secret, language hint).
 
 **Voice profile lock** (per long/very long): dopo prima sezione del draft, esegui:
 ```bash
@@ -617,37 +508,19 @@ L'audit trail è append-only: dopo `approved` non si modifica.
 | esperienza | 5-20 | ESPERIENZA.md | ESPERIENZA.tex | narrativo-strutturato | md | — |
 | custom | (chiedi) | (chiedi) | (chiedi) | (chiedi) | (chiedi) | — |
 
-## Red Flags — STOP
+## Sub-agent delegation policy
 
-- Scrivere bozza prima di completare TUTTE le 9 domande Step 1 (incluso scope online)
-- WebSearch/WebFetch quando l'utente ha scelto `solo-locale`
-- Produrre due PDF visivamente identici (formato `both` richiede stili differenziati — Stile A vs Stile B)
-- Saltare DOCX (è SEMPRE prodotto, mai opzionale)
-- Sovrascrivere `RELAZIONE.pdf` da md con `RELAZIONE.pdf` da tex (rinomina sempre `-tex.pdf`)
-- Scrivere file di output direttamente in cwd invece che in sottocartella
-- Non verificare con Glob se `relazioni/` esiste già — porta a sovrascritture
-- Includere riferimenti AI/Claude/Anthropic anche in commenti LaTeX
-- Claimare docx/pdf/LaTeX compilato senza eseguire e verificare exit-code
-- Installare tool senza chiedere
-- Producing report molto sotto target di pagine
-- Ripetere contenuto per gonfiare lunghezza
-- `[MOCK]` non listati in Nota metodologica
-- Mockare nomi persone / bibliografia / DOI / dati fiscali (anche con sì-mock)
-- Inventare URL/DOI/autori — cita solo recuperati via WebSearch
-- Saltare ricerca online per `tesi`/`ricerca`/`progetto`
-- Path immagini inesistenti
-- `\cite{key}` per chiavi non in `.bib`
-- Mescolare sintassi md in `.tex` o viceversa
-- Leggere `node_modules` o altre escluse
-- Saltare Step 6.5 quando il codice incluso può contenere secret
-- Saltare Step 6.7 layout-coherence (BLOCCANTE — fronte/TOC/biblio out-of-order)
-- Procedere a Step 7 con `layout_check.fail_count > 0`
-- Non eseguire Step 4.5 self-check prima del write finale
-- Procedere senza salvare backup pre-rigenerazione
-- **Step 8 che setta `status: "completed"`** — VIETATO. Step 8 termina in `ready-for-approval`. Solo `/relazione-approve` può promuovere.
-- **Editare manualmente `session-state.json.status` saltando passaggi** — VIETATO (transizione proibita)
-- Saltare Step 2.6 knowledge graph build — il KG è sorgente di verità per Step 4/5
-- Re-read di file sorgente quando il dato è già in `.session/knowledge/nodes.jsonl`
+Ogni invocazione di Task/subagent costa ~20k token di startup. Delega **solo** quando:
+
+- L'output sarebbe troppo verboso per il main context (>5k token di lint/scan/diff)
+- 4+ esportazioni indipendenti possono parallelizzarsi (PDF + DOCX + EPUB + LaTeX)
+- È un'attività di scan deep (`step-2-parallel.md` — 4 facet-specific agent)
+
+**Non delegare** lookup brevi (single Read), risoluzione variabili, stato session, classificazione single-fact. Vedi `docs/PERFORMANCE.md` per linee guida quantitative.
+
+## Red Flags — vedi `steps/red-flags.md`
+
+Lista completa di anti-pattern e regole bloccanti caricabile on-demand. Le regole più critiche sono già in §NON-NEGOTIABLE RULES sopra.
 
 ## Slash commands ecosystem
 
