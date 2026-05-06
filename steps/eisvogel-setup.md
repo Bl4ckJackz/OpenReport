@@ -59,13 +59,13 @@ I parametri possono essere passati anche come `-V key=value` da CLI.
 ## Preset disponibili
 
 Vedi `presets/` per YAML preconfigurati:
-- `mindsmart-tecnica.yaml` — brand Mindsmart blu/azzurro
+- `example-brand-tecnica.yaml` — brand Example Brand blu/azzurro
 - `tesi-default.yaml` — sobrio, accademico ma colorato
 - `progetto-aziendale.yaml` — corporate, neutro
 
 Applica un preset prependendo il YAML al markdown:
 ```bash
-cat presets/mindsmart-tecnica.yaml RELAZIONE.md > RELAZIONE-eisvogel.md
+cat presets/example-brand-tecnica.yaml RELAZIONE.md > RELAZIONE-eisvogel.md
 pandoc RELAZIONE-eisvogel.md -o RELAZIONE.pdf --template=eisvogel ...
 ```
 

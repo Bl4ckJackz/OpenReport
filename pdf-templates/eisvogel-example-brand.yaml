@@ -1,13 +1,13 @@
 ---
-# Mindsmart brand template for Eisvogel
-# Colori default — sostituisci con brand colors ufficiali Mindsmart se disponibili.
+# Example Brand brand template for Eisvogel
+# Colori default — sostituisci con brand colors ufficiali Example Brand se disponibili.
 
 lang: it-IT
 geometry: a4paper,margin=2.2cm,top=2.5cm,bottom=2.5cm
 
 # Title page
 titlepage: true
-titlepage-color: "1E3A8A"             # blu profondo (Mindsmart primary placeholder)
+titlepage-color: "1E3A8A"             # blu profondo (Example Brand primary placeholder)
 titlepage-text-color: "FFFFFF"
 titlepage-rule-color: "06B6D4"        # cyan accent
 titlepage-rule-height: 4
@@ -48,7 +48,7 @@ book: false
 header-left: ""
 header-center: ""
 header-right: "\\thepage"
-footer-left: "Mindsmart"
+footer-left: "Example Brand"
 footer-center: ""
 footer-right: ""
 

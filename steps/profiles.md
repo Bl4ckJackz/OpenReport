@@ -5,7 +5,7 @@ I preset risparmiano le 9 domande iniziali quando hai pattern ricorrenti.
 ## Uso
 
 ```bash
-/relazione --profile=mindsmart-tecnica
+/relazione --profile=example-brand-tecnica
 /relazione --profile=tesi-magistrale
 ```
 
@@ -14,9 +14,9 @@ La skill carica `presets/<nome>.yaml` e usa quei valori come risposte default. S
 ## Schema preset YAML
 
 ```yaml
-# presets/mindsmart-tecnica.yaml
-profile_name: "Mindsmart — Relazione tecnica cliente"
-description: "Default per relazioni tecniche di progetto consegnate ai clienti Mindsmart"
+# presets/example-brand-tecnica.yaml
+profile_name: "Example Brand — Relazione tecnica cliente"
+description: "Default per relazioni tecniche di progetto consegnate ai clienti Example Brand"
 answers:
   tipologia: "tecnica"
   lingua: "italiano"
@@ -31,8 +31,8 @@ answers:
   bibliografia: "biblatex"
 cover_defaults:
   autore: "Dominik Duda"
-  ente: "Mindsmart"
-pdf_template: "mindsmart-eisvogel.yaml"  # vedi pdf-templates/
+  ente: "Example Brand"
+pdf_template: "example-brand-eisvogel.yaml"  # vedi pdf-templates/
 post_actions:
   - bundle
   - executive-summary
@@ -42,7 +42,7 @@ post_actions:
 
 Vedi cartella `presets/`:
 
-- `mindsmart-tecnica.yaml`
+- `example-brand-tecnica.yaml`
 - `tesi-magistrale.yaml`
 - `progetto-aziendale.yaml`
 - `bug-postmortem-rapido.yaml`
@@ -56,7 +56,7 @@ Se l'utente non specifica `--profile`, prova auto-detect dal nome cwd:
 - `tesi-*`, `thesis-*` → suggerisci `tesi-magistrale`
 - `progetto-*`, `project-*` → suggerisci `progetto-aziendale`
 - `bug-*`, `incident-*`, `postmortem-*` → suggerisci `bug-postmortem-rapido`
-- `mindsmart-*` → suggerisci `mindsmart-tecnica`
+- `example-brand-*` → suggerisci `example-brand-tecnica`
 
 `AskUserQuestion`:
 > "Cartella suggerisce profilo `tesi-magistrale`. Uso questo o preferisci configurare manualmente?"
@@ -65,7 +65,7 @@ Se l'utente non specifica `--profile`, prova auto-detect dal nome cwd:
 
 Anche con preset attivo, l'utente può override singoli campi via flag:
 ```bash
-/relazione --profile=mindsmart-tecnica --pages=50 --mock=si
+/relazione --profile=example-brand-tecnica --pages=50 --mock=si
 ```
 
 I flag override il preset; campi non specificati restano dal preset; il resto viene chiesto.

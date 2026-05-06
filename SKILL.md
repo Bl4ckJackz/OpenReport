@@ -3,47 +3,9 @@ name: relazione
 description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
 ---
 
-# Relazione (Report Writer) — v2.1.00
+# Relazione (Report Writer)
 
-## What's new in v2.1.00 — Quick index
-
-- **Knowledge graph vettorizzato** (lightweight): `scripts/knowledge-graph.py` produce `.session/knowledge/` con embedding hash-based 128-dim. Sostituisce re-read raw in Step 4/5 → −60–80% token. Vedi `steps/knowledge-graph.md`.
-- **State machine STRETTA per approval**: `in-progress → ready-for-approval → approved → completed`. Step 8 NON setta più `completed`. Solo `/relazione-approve` può promuovere ad `approved`. Vedi `steps/step-9-approval.md`.
-- **Layout coherence check (BLOCCANTE)**: nuovo Step 6.7 con `scripts/layout-coherence.py`. Verifica frontespizio first, TOC dopo frontespizio, bibliografia prima di appendici, ecc. Vedi `steps/step-6.7-layout-coherence.md`.
-- **Export dual-style**: DOCX SEMPRE prodotto + PDF moderno SEMPRE prodotto + (se LaTeX) LaTeX-PDF accademico → 2 stili visivamente distinti. Vedi `steps/step-7-export.md`.
-- **Resume free-form option**: in `/relazione-continua` nuova opzione "Apri il file e decidiamo insieme cosa modificare" — carica il documento e attende richieste libere.
-
-## What's new in v2.0.02 — Quick index
-
-- **Auto-diagrammi**: `scripts/auto-diagram.py` (Mermaid/PlantUML da testo) — vedi `steps/auto-diagram.md`
-- **Table/abstract/TOC**: `table-from-data.py`, `abstract-generator.py`, `toc-regen.py`
-- **Ricerca avanzata**: `arxiv-import.py`, `semantic-scholar-import.py`, `link-checker.sh`, `lit-review-assistant.py`
-- **Quality gates**: `spell-check.sh`, `grammar-check.py` (LanguageTool), `citation-style-enforcer.py`, `latex-sandbox-test.sh`
-- **Export estesi**: `export-typst.sh`, `export-quarto.sh`, `export-html-standalone.sh`, `pdf-protect.py`, `qr-cover.py`, `integrity-hash.sh`
-- **Security**: `gpg-sign.sh`, `user-watermark.py` (batch per destinatario), `pdf-redact.py` (permanent)
-- **Collaboration**: `/relazione-workspace` (multi-sessione), `tag-manager.py`, `full-text-search.sh`, `/relazione-preset-import`
-- **Lingue**: ES/FR/DE/PT aggiunte, AI-tells patterns + `locale-format.py`
-- **AI coach**: `clarity-score.py`, `tone-adjust.py`, `reviewer-simulator.py`
-- **Accessibility**: `epub3-audio.sh`, `audiobook-tts.sh`, `dyslexia-variant.sh`
-
-## What's new in v2.0.01 — Quick index
-
-- **Enterprise tipologie** (14): vedi `templates.md` sezione "Tipologie enterprise"
-- **Brand/User profile**: `.brand-profile.json`, `.user-profile.json` → `steps/brand-profile.md`
-- **Document control**: cover estesa (classification, approvers, versione, status) → `steps/cover-control.md`
-- **Approval workflow**: `/relazione-review`, `/relazione-approve`, `/relazione-import-feedback`, `scripts/watermark-pdf.py`, `scripts/audit-trail.py`
-- **Variables/mail merge**: `scripts/resolve-variables.py` risolve `{{placeholder}}`
-- **Precisione**: self-check esteso con `fact-check.py`, `cross-ref-lint.py`, `temporal-check.py`
-- **Prestazioni**: `research-cache.py`, `parallel-export.sh`, `section-regen.py`
-- **Usabilità**: `live-preview.sh`, `progress-tracker.py`, `auto-save.sh`
-- **Generatori**: RACI/RTM/risk/Gantt/stakeholder/KPI in `scripts/*.py`
-- **Citation/accessibility**: `citation-enrich.py` (CrossRef), `plagio-lite.py`, `accessibility-pass.py`
-- **Multi-lingua IT+EN**: `bilingual-generator.py` → `steps/multilingua-parallel.md`
-- **Integrazioni esterne**: `scripts/integrations/` (Jira, Linear, Confluence, Notion, SharePoint, Slack, Teams, Git) → `steps/integrations.md`
-- **Recurring reports**: `/relazione-ricorrente` + `scripts/diff-summary.py`
-- **Università**: +4 template (Padova, Pisa, Statale Milano, Federico II) + `defense-simulator.py`
-
-Changelog completo: `CHANGELOG.md`.
+Versione corrente: vedi `VERSION` — note di rilascio in `CHANGELOG.md`.
 
 ## Overview
 
@@ -642,7 +604,7 @@ L'audit trail è append-only: dopo `approved` non si modifica.
 
 | Tipologia | Pages tipiche | File output md | File output tex | Registro | Formato consigliato | Preset |
 |---|---|---|---|---|---|---|
-| tecnica | 10-30 | RELAZIONE.md | RELAZIONE.tex | tecnico | md | mindsmart-tecnica |
+| tecnica | 10-30 | RELAZIONE.md | RELAZIONE.tex | tecnico | md | example-brand-tecnica |
 | laboratorio | 5-15 | RELAZIONE.md | RELAZIONE.tex | tecnico-scientifico | md | — |
 | stage | 20-40 | RELAZIONE.md | RELAZIONE.tex | formale | md | — |
 | progetto | 30-100+ | RELAZIONE.md | RELAZIONE.tex | formale esteso | md | progetto-aziendale |

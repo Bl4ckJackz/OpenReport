@@ -40,7 +40,7 @@ post_actions:             # companion artifacts da generare in Step 8
 
 | File | Descrizione |
 |---|---|
-| `mindsmart-tecnica.yaml` | Relazione tecnica per cliente Mindsmart |
+| `example-brand-tecnica.yaml` | Relazione tecnica per cliente Example Brand |
 | `tesi-magistrale.yaml`   | Tesi magistrale italiana, latex+biblatex |
 | `progetto-aziendale.yaml`| Progetto aziendale 30-50 pp, both |
 | `bug-postmortem-rapido.yaml` | Post-mortem 5pp, md, no-online |
@@ -54,5 +54,5 @@ Crea `<nome>.yaml` in questa cartella. Schema sopra. Auto-discovered al prossimo
 
 Flag CLI hanno precedenza sul preset:
 ```bash
-/relazione --profile=mindsmart-tecnica --pages=50 --mock
+/relazione --profile=example-brand-tecnica --pages=50 --mock
 ```

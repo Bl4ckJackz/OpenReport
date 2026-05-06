@@ -63,6 +63,17 @@ Riavvia Claude Code e scrivi `/relazione` per attivarla.
 
 Il file `SKILL.md` è compatibile con il formato Anthropic Skills. Per Gemini CLI la skill viene attivata via `activate_skill`. Vedi [`docs/SKILL-GUIDE.md`](./docs/SKILL-GUIDE.md) per i dettagli.
 
+## Diagnostica
+
+Verifica l'ambiente in 1 comando:
+
+```bash
+python scripts/doctor.py            # report leggibile
+python scripts/doctor.py --json     # output machine-readable per CI
+```
+
+Esce con codice ≠ 0 se manca uno strumento **required**. Strumenti `recommended` e `optional` sono segnalati ma non bloccanti.
+
 ## Dipendenze
 
 La skill funziona "a livelli" — il workflow base richiede solo Python. Le funzionalità avanzate sono opzionali e degradano in modo elegante se mancano i tool.
@@ -129,9 +140,13 @@ $ claude
 - **PDF redact permanente** — disponibile in `scripts/pdf-redact.py`.
 - **GPG sign** — firma del PDF finale per integrità (`scripts/gpg-sign.sh`).
 
+## Esempi
+
+Vedi [`examples/`](./examples/) — output reali della skill (anonimizzati) per uno status report settimanale e un estratto di tesi magistrale.
+
 ## Licenza
 
-TBD — il progetto è pubblicato come riferimento; specificare licenza prima dell'adozione in produzione.
+[MIT](./LICENSE) — Copyright (c) 2026 Dominik Duda.
 
 ## Contribuire
 

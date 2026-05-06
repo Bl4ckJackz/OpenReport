@@ -14,13 +14,13 @@ answers:
   classe_latex: "report"
   bibliografia: "biblatex"
   pdf_style: "brand"
-  brand_profile: "mindsmart"
+  brand_profile: "example-brand"
 
 cover_defaults:
   classificazione: "confidential"
   status: "draft"
 
-pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+pdf_template: "../pdf-templates/eisvogel-example-brand.yaml"
 
 post_actions:
   - executive-summary

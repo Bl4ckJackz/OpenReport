@@ -11,8 +11,8 @@
         "type": "object",
         "required": ["nome", "ragione_sociale"],
         "properties": {
-          "nome": {"type": "string", "description": "Chiave breve, es. 'mindsmart'."},
-          "ragione_sociale": {"type": "string", "description": "Nome legale, es. 'Mindsmart S.r.l.'."},
+          "nome": {"type": "string", "description": "Chiave breve, es. 'example-brand'."},
+          "ragione_sociale": {"type": "string", "description": "Nome legale, es. 'Example Brand S.r.l.'."},
           "claim": {"type": "string"},
           "indirizzo": {"type": "string"},
           "p_iva": {"type": "string"},

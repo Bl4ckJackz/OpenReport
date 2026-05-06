@@ -9,7 +9,7 @@ YAML preset per pandoc + Eisvogel template. Vengono prepended al markdown prima 
 | File | Stile | `pdf_style` | Quando usarlo |
 |---|---|---|---|
 | `eisvogel-relazione.yaml` | Moderno colorato (blu+ambra, callout, tabelle alternate) | `moderno` | **Default** per progetti/stage/finale/tecnica/bug/esperienza |
-| `eisvogel-mindsmart.yaml` | Brand Mindsmart (blu/cyan) | `brand` | Relazioni cliente con branding Mindsmart |
+| `eisvogel-example-brand.yaml` | Brand Example Brand (blu/cyan) | `brand` | Relazioni cliente con branding Example Brand |
 | `eisvogel-default-it.yaml` | Default italiano sobrio | `accademico` | Generale quando serve stile neutro e formale |
 | `eisvogel-tesi-modern.yaml` | Accademico modernizzato (navy+amber, KOMA-Script report) | `accademico` | Tesi/paper che vogliono un look meno "muro di testo" |
 
@@ -25,7 +25,7 @@ Inserire con `\input{preamble-moderna.tex}` subito dopo `\documentclass{...}`. R
 
 ```bash
 cd <output_folder>
-cat <skill_dir>/pdf-templates/eisvogel-mindsmart.yaml RELAZIONE.md > _temp.md
+cat <skill_dir>/pdf-templates/eisvogel-example-brand.yaml RELAZIONE.md > _temp.md
 pandoc _temp.md -o RELAZIONE.pdf --template=eisvogel --pdf-engine=xelatex --listings
 rm _temp.md
 ```
@@ -36,7 +36,7 @@ I preset in `presets/<name>.yaml` puntano a uno di questi file via campo `pdf_te
 
 ## Customizzare
 
-Copia `eisvogel-mindsmart.yaml` come base. Modifica:
+Copia `eisvogel-example-brand.yaml` come base. Modifica:
 - `titlepage-color`: colore HEX della title page
 - `titlepage-rule-color`: colore della linea sottotitolo
 - `header-includes`: per aggiungere logo (`\\logo{path/to/logo.png}`)

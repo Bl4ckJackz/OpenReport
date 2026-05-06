@@ -17,7 +17,7 @@ answers:
 cover_defaults:
   autore: "Dominik Duda"
 
-pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+pdf_template: "../pdf-templates/eisvogel-example-brand.yaml"
 
 post_actions:
   - bundle

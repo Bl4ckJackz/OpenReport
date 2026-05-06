@@ -19,7 +19,7 @@ Dettaglio modulo cover control per documenti enterprise. Usato da:
 | `cliente` | Chiedi | tipologie con committente esterno | `ACME S.p.A.` |
 | `progetto_codice` | Chiedi | progetto/sow/proposta/status | `ACME-PRJ-042` |
 | `contratto_id` | Chiedi opzionale | sow/proposta | `CTR-2026-018` |
-| `logo_path` | Brand profile o chiedi | se brand attivo | `~/logos/mindsmart.png` |
+| `logo_path` | Brand profile o chiedi | se brand attivo | `~/logos/example-brand.png` |
 
 ## Domanda aggiuntiva Step 1 (solo tipologie business)
 

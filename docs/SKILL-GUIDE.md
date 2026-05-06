@@ -246,7 +246,7 @@ flowchart TD
     TEX --> ST2{pdf_style}
     ST1 -->|accademico| EIS1[eisvogel-default-it]
     ST1 -->|moderno| EIS2[eisvogel-relazione ★]
-    ST1 -->|brand| EIS3[eisvogel-mindsmart]
+    ST1 -->|brand| EIS3[eisvogel-example-brand]
     ST2 -->|accademico| CLA[article/report/book]
     ST2 -->|moderno| MPRE[relazione-moderna-preamble.tex ★]
     ST2 -->|brand| CUS[preamble custom]

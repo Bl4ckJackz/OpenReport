@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.1.01 — 2026-05-06
+
+Pulizia per pubblicazione open-source su `Bl4ckJackz/OpenReport`.
+
+### Aggiunte
+
+- **`README.md`** pubblico con quickstart, comandi, dipendenze e struttura del repo.
+- **`LICENSE`** MIT.
+- **`.gitattributes`** per normalizzare line endings (LF) cross-platform.
+- **`scripts/doctor.py`** — diagnostica delle dipendenze (required/recommended/optional). Supporta `--json` per integrazioni CI.
+- **`examples/`** — due esempi reali (status report, estratto tesi) come showcase e benchmark visivo.
+
+### Modifiche
+
+- **`SKILL.md`** snellito: rimosse le sezioni "What's new" duplicate (vivono in `CHANGELOG.md`). Risparmio token per invocazione ~15%.
+- **Preset rinominati** da `mindsmart-*` a `example-brand-*`: `presets/mindsmart-tecnica.yaml` → `presets/example-brand-tecnica.yaml`, `pdf-templates/eisvogel-mindsmart.yaml` → `pdf-templates/eisvogel-example-brand.yaml`. Aggiornati tutti i riferimenti.
+- **`scripts/citation-enrich.py`** — User-Agent generico (`noreply@example.com`) al posto di indirizzo aziendale.
+
+### Note di migrazione
+
+Sessioni con `pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"` continuano a funzionare se l'utente mantiene il vecchio file localmente. Per allinearsi: aggiornare manualmente `session-state.json` o lanciare `/relazione-continua` e riselezionare il preset.
+
 ## 2.0.03 — 2026-05-04
 
 Domanda condizionale per inclusione di code snippet dai sorgenti della cwd.

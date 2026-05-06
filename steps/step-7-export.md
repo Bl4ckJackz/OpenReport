@@ -26,7 +26,7 @@ Nessuna domanda di "vuoi anche docx?" — il DOCX si produce sempre.
 **`AskUserQuestion`** con 2 opzioni:
 
 1. **Moderno relazione** *(default)* — eisvogel-relazione (blu profondo + ambra), callout, tabelle a righe alternate, code highlight
-2. **Brand aziendale** — preset custom (es. `eisvogel-mindsmart.yaml`). Se nessun brand attivo, ricade su moderno
+2. **Brand aziendale** — preset custom (es. `eisvogel-example-brand.yaml`). Se nessun brand attivo, ricade su moderno
 
 Valori in schema: `moderno` | `brand`. Il valore `accademico` resta consentito per retro-compatibilità ma è ridondante (lo Stile A copre già l'accademico).
 
@@ -125,8 +125,8 @@ pandoc _temp.md -o RELAZIONE.pdf --toc --pdf-engine=xelatex \
   --bibliography=references.bib --citeproc
 rm _temp.md
 
-# md → pdf BRAND AZIENDALE (eisvogel-mindsmart o preset utente) — pdf_style="brand"
-cat <skill_dir>/pdf-templates/eisvogel-mindsmart.yaml RELAZIONE.md > _temp.md
+# md → pdf BRAND AZIENDALE (eisvogel-example-brand o preset utente) — pdf_style="brand"
+cat <skill_dir>/pdf-templates/eisvogel-example-brand.yaml RELAZIONE.md > _temp.md
 pandoc _temp.md -o RELAZIONE.pdf --toc --pdf-engine=xelatex \
   --template=eisvogel --listings --filter mermaid-filter \
   --bibliography=references.bib --citeproc

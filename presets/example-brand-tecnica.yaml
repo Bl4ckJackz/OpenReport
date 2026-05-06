@@ -1,5 +1,5 @@
-profile_name: "Mindsmart — Relazione tecnica cliente"
-description: "Default per relazioni tecniche di progetto consegnate ai clienti Mindsmart. Stile semi-formale aziendale, sia md che pdf moderno con brand Mindsmart."
+profile_name: "Example Brand — Relazione tecnica cliente"
+description: "Default per relazioni tecniche di progetto consegnate ai clienti Example Brand. Stile semi-formale aziendale, sia md che pdf moderno con brand Example Brand."
 
 answers:
   tipologia: "tecnica"
@@ -16,9 +16,9 @@ answers:
 
 cover_defaults:
   autore: "Dominik Duda"
-  ente: "Mindsmart"
+  ente: "Example Brand"
 
-pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+pdf_template: "../pdf-templates/eisvogel-example-brand.yaml"
 
 post_actions:
   - bundle

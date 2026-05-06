@@ -27,7 +27,7 @@ DOI_URL = "https://doi.org/{doi}"
 
 def http_get_json(url, timeout=10):
     req = urllib.request.Request(url, headers={
-        "User-Agent": "relazione-citation-enrich/1.0 (mailto:info@mindsmart.it)",
+        "User-Agent": "relazione-citation-enrich/1.0 (mailto:noreply@example.com)",
         "Accept": "application/json",
     })
     with urllib.request.urlopen(req, timeout=timeout) as resp:

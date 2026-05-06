@@ -97,7 +97,7 @@
         "preset": {"type": ["string", "null"], "description": "Nome preset usato (vedi presets/)"},
         "quick_mode": {"type": "boolean", "default": false},
         "draft_only": {"type": "boolean", "default": false},
-        "brand_profile": {"type": ["string", "null"], "description": "Nome brand profile (es. 'mindsmart'). null=nessun brand."},
+        "brand_profile": {"type": ["string", "null"], "description": "Nome brand profile (es. 'example-brand'). null=nessun brand."},
         "use_user_profile": {"type": "boolean", "default": true, "description": "Se true carica ~/.claude/skills/relazione/.user-profile.json come seed stilistico."},
         "scadenza": {"type": ["string", "null"], "format": "date", "description": "Data consegna, usata per piano a ritroso."}
       }
