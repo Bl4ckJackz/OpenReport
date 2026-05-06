@@ -218,7 +218,7 @@ La modalità profondo-parallelo ha 5 garanzie esplicite che prevengono drift:
 4. **Confidence agreement score** — formula **1 − prodotto di (1 − cᵢ)** su tutte le provenance. Single-source capped a 0.75. Niente inflazione artificiale.
 5. **Schema con `extras{}`** — campi non previsti preservati, mai droppati.
 
-Più **round-trip check bloccante** (`scripts/scan-rebuild-check.sh`): se un raw entry non si ritrova nel merged, FAIL + diff + re-merge con soglia più conservativa.
+Più **round-trip check bloccante** (`scripts/workflow/scan-rebuild-check.sh`): se un raw entry non si ritrova nel merged, FAIL + diff + re-merge con soglia più conservativa.
 
 ```mermaid
 flowchart LR
@@ -267,11 +267,11 @@ flowchart TD
 
 | Artefatto | Tool | Quando |
 |---|---|---|
-| Executive summary 1-pp | `scripts/executive-summary.py` | Sempre utile |
-| Slide deck Marp/Beamer | `scripts/slide-deck.py` | Presentazioni, difesa |
+| Executive summary 1-pp | `scripts/export/executive-summary.py` | Sempre utile |
+| Slide deck Marp/Beamer | `scripts/export/slide-deck.py` | Presentazioni, difesa |
 | EPUB | `pandoc` | Lettura tablet/Kindle |
-| Bundle `.zip` | `scripts/bundle.sh` | Consegna finale |
-| Defense pack | `scripts/defense-pack.py` | Solo tesi |
+| Bundle `.zip` | `scripts/export/bundle.sh` | Consegna finale |
+| Defense pack | `scripts/export/defense-pack.py` | Solo tesi |
 
 ---
 

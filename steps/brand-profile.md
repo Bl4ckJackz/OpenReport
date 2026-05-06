@@ -6,7 +6,7 @@ Il brand profile (`.brand-profile.json`) è il contenitore di identità aziendal
 
 1. **Step 1** — se l'utente sceglie tipologia enterprise, offri "Usa brand profile attivo?" come prima domanda (vedi `steps/cover-control.md`).
 2. **Step 6** — cover page include logo e ragione sociale da brand.
-3. **Step 7** — se `pdf_style=brand`, genera `eisvogel-brand.yaml` dinamicamente con `scripts/brand-to-eisvogel.py`.
+3. **Step 7** — se `pdf_style=brand`, genera `eisvogel-brand.yaml` dinamicamente con `scripts/export/brand-to-eisvogel.py`.
 4. **Step 4.5** — self-check estende forbidden-check con `--brand=<nome>` per includere banned_words aziendali.
 5. **Refinement Step 5** — `apply_preferred_terms` può essere invocato per sostituire termini generici con quelli aziendali.
 
@@ -20,12 +20,12 @@ Esempio use case: consulente che lavora per 3 clienti, ciascuno con proprio stil
 
 | Script | Scopo |
 |---|---|
-| `scripts/brand-loader.py --list` | Elenca brand disponibili |
-| `scripts/brand-loader.py --info --brand <nome>` | Dump JSON del brand |
-| `scripts/brand-loader.py --apply-preferred-terms <file> --brand <nome> --in-place` | Sostituisce termini generici → aziendali |
-| `scripts/brand-loader.py --banned-words --brand <nome>` | Lista banned words (una per riga) |
-| `scripts/brand-to-eisvogel.py --brand <nome> -o eisvogel-auto.yaml` | Genera preset eisvogel da brand |
-| `scripts/forbidden-check.sh <file> --brand <nome>` | Self-check esteso con banned words brand |
+| `scripts/workflow/brand-loader.py --list` | Elenca brand disponibili |
+| `scripts/workflow/brand-loader.py --info --brand <nome>` | Dump JSON del brand |
+| `scripts/workflow/brand-loader.py --apply-preferred-terms <file> --brand <nome> --in-place` | Sostituisce termini generici → aziendali |
+| `scripts/workflow/brand-loader.py --banned-words --brand <nome>` | Lista banned words (una per riga) |
+| `scripts/export/brand-to-eisvogel.py --brand <nome> -o eisvogel-auto.yaml` | Genera preset eisvogel da brand |
+| `scripts/quality/forbidden-check.sh <file> --brand <nome>` | Self-check esteso con banned words brand |
 
 ## Comando interattivo
 

@@ -15,7 +15,7 @@ Usato quando l'utente sceglie `answers.lingua = "italiano+inglese"` in Step 1.
    - `.session/glossary.json` (termini tecnici condivisi)
 5. **Step 7 export**:
    - 2 PDF separati: `RELAZIONE-it.pdf`, `RELAZIONE-en.pdf`
-   - (Opzionale) bilingual side-by-side: `scripts/bilingual-generator.py --mode split-page`
+   - (Opzionale) bilingual side-by-side: `scripts/generators/bilingual-generator.py --mode split-page`
    - (Opzionale) bilingual sequential: sezione IT + EN alternate in un solo doc
 
 ## Regole

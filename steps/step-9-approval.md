@@ -73,8 +73,8 @@ Prima di approvare, completare Step 8 fino a "ready-for-approval".
    ```json
    {"at":"<ISO>","actor":"<approver>","action":"approve","version":"1.0","note":""}
    ```
-5. Esegui `python3 scripts/audit-trail.py append` con la riga sopra
-6. Esegui `python3 scripts/watermark-pdf.py` per togliere il banner DRAFT/IN-REVIEW
+5. Esegui `python3 scripts/workflow/audit-trail.py append` con la riga sopra
+6. Esegui `python3 scripts/export/watermark-pdf.py` per togliere il banner DRAFT/IN-REVIEW
 7. Crea `<output>/archive/v<versione>/` e copia tutti i file finali
 8. Update `session-state.json`:
    ```json
@@ -103,9 +103,9 @@ Eseguito automaticamente dopo `approved`:
 2. Aggiorna `cover.versione` → versione approvata
 3. Esegui integrity hash su tutti i file finali:
    ```bash
-   bash scripts/integrity-hash.sh <output>/archive/v<versione>/
+   bash scripts/security/integrity-hash.sh <output>/archive/v<versione>/
    ```
-4. (Opzionale, su `AskUserQuestion`) firma GPG: `bash scripts/gpg-sign.sh`
+4. (Opzionale, su `AskUserQuestion`) firma GPG: `bash scripts/security/gpg-sign.sh`
 5. Update `session-state.json`:
    ```json
    { "status": "completed", "completed_at": "<ISO>" }

@@ -24,7 +24,7 @@ Segui `scan-agents/_common.md` per regole comuni.
 - `table.attrs`: `{file: str, rows: int, cols: int, caption: str|null, has_header: bool}`
 - `code_block.attrs`: `{file: str, language: str, lines: [start, end], summary: str}`
 - `schema.attrs`: `{file: str, format: "prisma|sql|json-schema|protobuf|openapi", entity_count: int, can_diagram: bool}`
-  - `can_diagram: true` se `scripts/schema-to-diagram.py` può generare ER
+  - `can_diagram: true` se `scripts/intel/schema-to-diagram.py` può generare ER
 - `figure.attrs`: `{component_image_ids: [entity_id, ...], suggested_layout: "grid|row|column"}`
 
 ### Fuori scope (NON emettere)

@@ -25,7 +25,7 @@
 ### Build da scratch (Step 2 `rapido`)
 
 ```bash
-python3 scripts/knowledge-graph.py build \
+python3 scripts/intel/knowledge-graph.py build \
   --root <cwd> \
   --out <output>/.session/knowledge
 ```
@@ -35,7 +35,7 @@ python3 scripts/knowledge-graph.py build \
 Riusa `entities.jsonl` + `graph.json` esistenti:
 
 ```bash
-python3 scripts/knowledge-graph.py from-scan \
+python3 scripts/intel/knowledge-graph.py from-scan \
   --scan <output>/.session/scan \
   --out  <output>/.session/knowledge
 ```
@@ -45,7 +45,7 @@ python3 scripts/knowledge-graph.py from-scan \
 ```bash
 python3 <output>/.session/knowledge/query.py "auth jwt refresh token" 5
 # oppure
-python3 scripts/knowledge-graph.py query \
+python3 scripts/intel/knowledge-graph.py query \
   --out <output>/.session/knowledge \
   --text "auth jwt refresh" --topk 5
 ```

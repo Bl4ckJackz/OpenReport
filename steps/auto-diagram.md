@@ -1,6 +1,6 @@
 # Step — Auto-diagrammi da descrizione testuale
 
-`scripts/auto-diagram.py` converte descrizioni strutturate in Mermaid/PlantUML pronti da incollare nel draft.
+`scripts/generators/auto-diagram.py` converte descrizioni strutturate in Mermaid/PlantUML pronti da incollare nel draft.
 
 ## Tipi supportati
 
@@ -18,12 +18,12 @@
    - `AskUserQuestion` con 5 opzioni tipi sopra
 2. Genera skeleton:
    ```bash
-   python3 scripts/auto-diagram.py --template flowchart > /tmp/diag.txt
+   python3 scripts/generators/auto-diagram.py --template flowchart > /tmp/diag.txt
    ```
 3. Mostra template, chiedi all'utente di riempirlo (nodi, edges, actor, ecc.)
 4. Converti:
    ```bash
-   python3 scripts/auto-diagram.py /tmp/diag.txt --engine mermaid -o /tmp/diag.md
+   python3 scripts/generators/auto-diagram.py /tmp/diag.txt --engine mermaid -o /tmp/diag.md
    ```
 5. Inserisci il blocco Mermaid nel draft via Edit
 
@@ -54,7 +54,7 @@ RELATIONS:
 
 Esecuzione:
 ```bash
-python3 scripts/auto-diagram.py /tmp/arch.txt --engine mermaid
+python3 scripts/generators/auto-diagram.py /tmp/arch.txt --engine mermaid
 ```
 
 Output:

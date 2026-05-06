@@ -77,7 +77,7 @@ Anche se "solo commenti", finiscono nel sorgente consegnato.
 
 ## 6) Self-check command
 
-Lo script `scripts/forbidden-check.sh <file.md|file.tex>` esegue tutti i grep di questo file e ritorna exit-code 1 se trova qualcosa, con elenco occorrenze + numero riga.
+Lo script `scripts/quality/forbidden-check.sh <file.md|file.tex>` esegue tutti i grep di questo file e ritorna exit-code 1 se trova qualcosa, con elenco occorrenze + numero riga.
 
 Va lanciato:
 - Prima dello Step 6 (write output finale)

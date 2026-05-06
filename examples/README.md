@@ -26,5 +26,5 @@ Da una cartella di lavoro:
 Per condividere un esempio anonimizzato:
 
 ```bash
-python scripts/pii-redact.py RELAZIONE.md > examples/mio-esempio.md
+python scripts/security/pii-redact.py RELAZIONE.md > examples/mio-esempio.md
 ```

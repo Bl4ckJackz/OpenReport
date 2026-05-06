@@ -41,6 +41,8 @@ Versione corrente: vedi [`VERSION`](./VERSION) — changelog completo in [`CHANG
 | `/relazione-workspace` | Workspace multi-sessione |
 | `/relazione-condividi` | Comprime e condivide una sessione |
 | `/relazione-preset-import` | Importa preset da URL (gist/GitHub) |
+| `/relazione-doctor` | Diagnostica ambiente (dipendenze required/recommended/optional) |
+| `/relazione-setup` | Wizard al primo utilizzo (brand profile + Eisvogel + doctor) |
 
 ## Installazione
 
@@ -57,7 +59,13 @@ Su **Windows (PowerShell)**:
 git clone https://github.com/Bl4ckJackz/OpenReport.git "$env:USERPROFILE\.claude\skills\relazione"
 ```
 
-Riavvia Claude Code e scrivi `/relazione` per attivarla.
+Riavvia Claude Code e — al primo utilizzo — esegui:
+
+```bash
+python ~/.claude/skills/relazione/scripts/workflow/setup.py
+```
+
+Poi scrivi `/relazione` per attivarla.
 
 ### Copilot CLI / Gemini CLI
 
@@ -68,8 +76,8 @@ Il file `SKILL.md` è compatibile con il formato Anthropic Skills. Per Gemini CL
 Verifica l'ambiente in 1 comando:
 
 ```bash
-python scripts/doctor.py            # report leggibile
-python scripts/doctor.py --json     # output machine-readable per CI
+python scripts/workflow/doctor.py            # report leggibile
+python scripts/workflow/doctor.py --json     # output machine-readable per CI
 ```
 
 Esce con codice ≠ 0 se manca uno strumento **required**. Strumenti `recommended` e `optional` sono segnalati ma non bloccanti.
@@ -107,7 +115,15 @@ CHANGELOG.md        # storico versioni
 templates.md        # struttura per ogni tipologia
 docs/               # guida utente estesa
 steps/              # istruzioni per ogni step (caricati on-demand)
-scripts/            # 70+ automazioni Python/Bash (self-check, export, redact, …)
+scripts/
+  quality/        # self-check, readability, tone, citations, layout, grammar
+  security/       # PII redact, secret scan, watermark, GPG sign
+  export/         # PDF/DOCX/EPUB/Typst/Quarto/HTML, slides, audiobook
+  intel/          # citations, papers, knowledge graph, schema diagrams
+  generators/     # abstract, TOC, RACI, RTM, Gantt, KPI, risk register
+  workflow/       # state, brand, setup, doctor, save, search, tags
+  integrations/   # Jira, Linear, Confluence, Notion, SharePoint, Slack, Teams
+tests/              # smoke tests (pytest)
 presets/            # risposte preconfigurate per pattern ricorrenti
 pdf-templates/      # YAML Pandoc/Eisvogel + template università
 schemas/            # JSON Schema per validazione (session-state, brand, user)
@@ -137,8 +153,8 @@ $ claude
 - **Forbidden terms check** — la relazione non contiene mai riferimenti a Claude/Anthropic/AI o disclaimer "generato da intelligenza artificiale". Il testo è dell'utente.
 - **PII redact** — email, IP, path locali, codici fiscali, numeri di telefono vengono identificati prima dell'export.
 - **Secret scan** — token, API key, password vengono bloccati in fase di pre-export.
-- **PDF redact permanente** — disponibile in `scripts/pdf-redact.py`.
-- **GPG sign** — firma del PDF finale per integrità (`scripts/gpg-sign.sh`).
+- **PDF redact permanente** — disponibile in `scripts/security/pdf-redact.py`.
+- **GPG sign** — firma del PDF finale per integrità (`scripts/security/gpg-sign.sh`).
 
 ## Esempi
 
@@ -148,12 +164,23 @@ Vedi [`examples/`](./examples/) — output reali della skill (anonimizzati) per 
 
 [MIT](./LICENSE) — Copyright (c) 2026 Dominik Duda.
 
+## Test
+
+```bash
+pip install pytest jsonschema pyyaml
+pytest
+```
+
+CI su Linux/macOS/Windows × Python 3.10/3.11/3.12 — vedi `.github/workflows/test.yml`.
+
 ## Contribuire
 
 Pull request benvenute. Ogni nuovo `script/*` deve:
 
-1. Avere un'intestazione `#!/usr/bin/env python3` o `#!/usr/bin/env bash` e essere eseguibile
-2. Esporre `--help` con descrizione + esempio
-3. Degradare con messaggio chiaro se mancano dipendenze opzionali
-4. Essere referenziato in `SKILL.md` (tabella tool registry) e nello `steps/*.md` pertinente
-5. Avere voce in `CHANGELOG.md`
+1. Stare nella sottocartella appropriata (`quality/`, `security/`, `export/`, `intel/`, `generators/`, `workflow/`, `integrations/`)
+2. Avere un'intestazione `#!/usr/bin/env python3` o `#!/usr/bin/env bash` e essere eseguibile
+3. Esporre `--help` con descrizione + esempio
+4. Degradare con messaggio chiaro se mancano dipendenze opzionali
+5. Essere referenziato in `SKILL.md` (tabella tool registry) e nello `steps/*.md` pertinente
+6. Avere voce in `CHANGELOG.md`
+7. Far passare `pytest` (almeno gli smoke test esistenti)

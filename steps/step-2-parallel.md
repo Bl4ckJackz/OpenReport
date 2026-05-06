@@ -170,7 +170,7 @@ Relazioni derivate solo da co-occurrenze esplicite nei file (stesso file + pross
 Esegui:
 
 ```bash
-bash scripts/scan-rebuild-check.sh .session/scan/
+bash scripts/workflow/scan-rebuild-check.sh .session/scan/
 ```
 
 Lo script:

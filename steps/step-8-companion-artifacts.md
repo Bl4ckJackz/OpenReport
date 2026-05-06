@@ -13,7 +13,7 @@ Opzioni multi-select:
 
 ## Executive summary
 
-Script: `scripts/executive-summary.py <RELAZIONE.md> -o SUMMARY.md`
+Script: `scripts/export/executive-summary.py <RELAZIONE.md> -o SUMMARY.md`
 
 Estrae automaticamente:
 - Titolo + autore + data dal frontespizio
@@ -28,7 +28,7 @@ Uso: email di submission, allegato candidatura, post LinkedIn riassuntivo.
 
 ## Slide deck
 
-Script: `scripts/slide-deck.py <RELAZIONE.md> --engine={marp|beamer} -o SLIDES.md`
+Script: `scripts/export/slide-deck.py <RELAZIONE.md> --engine={marp|beamer} -o SLIDES.md`
 
 **Marp** (default, più semplice):
 - 1 slide titolo
@@ -62,7 +62,7 @@ Utile per leggere su Kindle/Boox/iPad durante revisione.
 
 ## Bundle .zip finale
 
-Script: `scripts/bundle.sh <output_folder>`
+Script: `scripts/export/bundle.sh <output_folder>`
 
 Crea `<titolo>-<data>.zip` contenente:
 - Tutti i `.md`, `.tex`, `.pdf`, `.docx`, `.epub` finali
@@ -81,7 +81,7 @@ Output: `<output>/relazione-{titolo-slug}-{YYYY-MM-DD}.zip`
 
 ## Defense pack (solo tesi)
 
-Script: `scripts/defense-pack.py <TESI.md> -o defense/`
+Script: `scripts/export/defense-pack.py <TESI.md> -o defense/`
 
 Genera:
 - `defense/DOMANDE-PROBABILI.md` — analizza punti deboli (warn da self-check, sezioni con poche citazioni, claim non supportati) e formula 10-15 domande probabili della commissione

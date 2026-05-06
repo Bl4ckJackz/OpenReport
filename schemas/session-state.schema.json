@@ -211,7 +211,7 @@
     },
     "variables": {
       "type": "object",
-      "description": "Placeholder aziendali risolti via scripts/resolve-variables.py. Es. {{client_name}}, {{project_code}}, {{delivery_date}}.",
+      "description": "Placeholder aziendali risolti via scripts/workflow/resolve-variables.py. Es. {{client_name}}, {{project_code}}, {{delivery_date}}.",
       "additionalProperties": {"type": ["string", "number", "boolean"]}
     },
     "refinement_history": {

@@ -14,7 +14,7 @@ Impedire artefatti come:
 ## Comando
 
 ```bash
-python3 scripts/layout-coherence.py <output>/RELAZIONE.md \
+python3 scripts/quality/layout-coherence.py <output>/RELAZIONE.md \
   --style=<accademico|moderno|brand> \
   --tipologia=<tipologia> \
   [--strict]

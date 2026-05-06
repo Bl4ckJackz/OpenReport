@@ -1,6 +1,6 @@
 ---
 name: relazione
-description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
+description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente, /relazione-doctor, /relazione-setup or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
 ---
 
 # Relazione (Report Writer)
@@ -24,7 +24,7 @@ Skill modulare per generare relazioni formali in Italiano/Inglese a partire dai 
 
 ## When to Use
 
-- Comandi: `/relazione`, `/relazione-quick`, `/relazione-continua`, `/relazione-rollback`, `/relazione-stats`, `/relazione-diff`
+- Comandi: `/relazione`, `/relazione-quick`, `/relazione-continua`, `/relazione-rollback`, `/relazione-stats`, `/relazione-diff`, `/relazione-doctor`, `/relazione-setup`
 - Richieste in linguaggio naturale: "scrivimi una relazione", "fammi la relazione su…", "prepara un report di…", "write a report about…"
 - Documentare progetto, esperienza, tesi, ricerca, lab, stage, codebase, bug, incidente
 
@@ -34,26 +34,26 @@ Skill modulare per generare relazioni formali in Italiano/Inglese a partire dai 
 
 | Categoria | Tool | Path | Quando usarlo |
 |---|---|---|---|
-| **Quality check** | `self-check.sh` | `scripts/self-check.sh` | Step 4.5 e 6 — orchestratore |
-| | `forbidden-check.sh` | `scripts/forbidden-check.sh` | grep AI tells + auto-ref |
-| | `readability.py` | `scripts/readability.py` | Gulpease/Flesch per sezione |
-| | `tone-drift.py` | `scripts/tone-drift.py` | drift di registro |
-| | `citation-density.py` | `scripts/citation-density.py` | densità citazioni |
-| | `voice-lock.py` | `scripts/voice-lock.py` | lock voice profile per consistency |
-| **Privacy** | `pii-redact.py` | `scripts/pii-redact.py` | Step 6.5 — email/IP/path/CF |
-| | `secret-scan.sh` | `scripts/secret-scan.sh` | Step 6.5 — token/key/password |
-| **Content intel** | `git-history-miner.sh` | `scripts/git-history-miner.sh` | cronologia attività da git |
-| | `zotero-import.py` | `scripts/zotero-import.py` | bib da Zotero/Mendeley |
-| | `schema-to-diagram.py` | `scripts/schema-to-diagram.py` | ER diagram da Prisma/SQL |
-| | `glossary-extract.py` | `scripts/glossary-extract.py` | glossario auto da codice |
-| **Output extra** | `executive-summary.py` | `scripts/executive-summary.py` | Step 8 — 1-pagina sintesi |
-| | `slide-deck.py` | `scripts/slide-deck.py` | Step 8 — Marp/Beamer |
-| | `bundle.sh` | `scripts/bundle.sh` | Step 8 — zip finale |
-| | `defense-pack.py` | `scripts/defense-pack.py` | Step 8 — solo tesi |
-| **Knowledge** | `knowledge-graph.py` | `scripts/knowledge-graph.py` | Step 2.6 — build KG / from-scan / query |
-| **Layout** | `layout-coherence.py` | `scripts/layout-coherence.py` | Step 6.7 — verifica ordinamento blocchi (BLOCCANTE) |
-| **Approval** | `audit-trail.py` | `scripts/audit-trail.py` | Step 9 — append-only audit log |
-| | `watermark-pdf.py` | `scripts/watermark-pdf.py` | Step 9 — togli/aggiungi DRAFT/IN-REVIEW |
+| **Quality check** | `self-check.sh` | `scripts/quality/self-check.sh` | Step 4.5 e 6 — orchestratore |
+| | `forbidden-check.sh` | `scripts/quality/forbidden-check.sh` | grep AI tells + auto-ref |
+| | `readability.py` | `scripts/quality/readability.py` | Gulpease/Flesch per sezione |
+| | `tone-drift.py` | `scripts/quality/tone-drift.py` | drift di registro |
+| | `citation-density.py` | `scripts/quality/citation-density.py` | densità citazioni |
+| | `voice-lock.py` | `scripts/quality/voice-lock.py` | lock voice profile per consistency |
+| **Privacy** | `pii-redact.py` | `scripts/security/pii-redact.py` | Step 6.5 — email/IP/path/CF |
+| | `secret-scan.sh` | `scripts/security/secret-scan.sh` | Step 6.5 — token/key/password |
+| **Content intel** | `git-history-miner.sh` | `scripts/intel/git-history-miner.sh` | cronologia attività da git |
+| | `zotero-import.py` | `scripts/intel/zotero-import.py` | bib da Zotero/Mendeley |
+| | `schema-to-diagram.py` | `scripts/intel/schema-to-diagram.py` | ER diagram da Prisma/SQL |
+| | `glossary-extract.py` | `scripts/intel/glossary-extract.py` | glossario auto da codice |
+| **Output extra** | `executive-summary.py` | `scripts/export/executive-summary.py` | Step 8 — 1-pagina sintesi |
+| | `slide-deck.py` | `scripts/export/slide-deck.py` | Step 8 — Marp/Beamer |
+| | `bundle.sh` | `scripts/export/bundle.sh` | Step 8 — zip finale |
+| | `defense-pack.py` | `scripts/export/defense-pack.py` | Step 8 — solo tesi |
+| **Knowledge** | `knowledge-graph.py` | `scripts/intel/knowledge-graph.py` | Step 2.6 — build KG / from-scan / query |
+| **Layout** | `layout-coherence.py` | `scripts/quality/layout-coherence.py` | Step 6.7 — verifica ordinamento blocchi (BLOCCANTE) |
+| **Approval** | `audit-trail.py` | `scripts/workflow/audit-trail.py` | Step 9 — append-only audit log |
+| | `watermark-pdf.py` | `scripts/export/watermark-pdf.py` | Step 9 — togli/aggiungi DRAFT/IN-REVIEW |
 
 ## Flow
 
@@ -283,7 +283,7 @@ Highlights:
 - 4 subagent paralleli (narrative/entities/temporal/assets) estraggono facet-specific
 - Merge conservativo in `entities.jsonl` con provenance preservation
 - Build `index/` (by-facet/file/section/date) + `graph.json`
-- Round-trip check bloccante via `scripts/scan-rebuild-check.sh`
+- Round-trip check bloccante via `scripts/workflow/scan-rebuild-check.sh`
 - Output: hybrid store in `.session/scan/` invece di raw content in main context
 - Guadagno: −50-70% pressione main context, +15-20% precisione fattuale, ~90% meno allucinazioni su date/email. Vedi `docs/SKILL-GUIDE.md` per numeri completi.
 
@@ -327,10 +327,10 @@ Subito dopo Step 2.5, costruisci il knowledge graph vettorizzato — produce `.s
 
 ```bash
 # Se Step 2 era 'rapido':
-python3 scripts/knowledge-graph.py build --root <cwd> --out <output>/.session/knowledge
+python3 scripts/intel/knowledge-graph.py build --root <cwd> --out <output>/.session/knowledge
 
 # Se Step 2 era 'profondo-parallelo' (riusa entities.jsonl + graph.json):
-python3 scripts/knowledge-graph.py from-scan --scan <output>/.session/scan --out <output>/.session/knowledge
+python3 scripts/intel/knowledge-graph.py from-scan --scan <output>/.session/scan --out <output>/.session/knowledge
 ```
 
 Aggiorna `session-state.json`: `knowledge_graph_ref`, `knowledge_graph_built_at`, `knowledge_graph_nodes`.
@@ -395,14 +395,14 @@ Regole comuni a `sì-*` e `solo-appendice`:
 - Estrai esclusivamente da file realmente esistenti nella cwd (verifica con Read), MAI inventare codice che non esiste
 - Specifica sempre il path di provenienza prima del code block: «L'estratto seguente, dal modulo `<path>`, mostra/illustra ...»
 - Riduci il codice estratto eliminando dettagli accessori (commenti verbosi, edge case minori), ma preserva la struttura essenziale e l'attribuzione
-- Mai includere secret/API key/IP esposti — applica masking se necessario (gestito poi anche da `scripts/secret-scan.sh` in Step 6.5)
+- Mai includere secret/API key/IP esposti — applica masking se necessario (gestito poi anche da `scripts/security/secret-scan.sh` in Step 6.5)
 - Linguaggio fenced code block: usa il language hint corretto (`typescript`, `python`, `dart`, `sql`, `rust`, `go`, ecc.) per abilitare syntax highlight nel PDF (eisvogel + listings)
 - Preferisci snippet che illustrano una decisione (es. perché si è scelto X), un pattern non banale, o una formula citata in §3 stato dell'arte
 - Aggiungi gli snippet a `files_written[]` solo se vivono in file separati; altrimenti restano inline nel `RELAZIONE.md`
 
 **Voice profile lock** (per long/very long): dopo prima sezione del draft, esegui:
 ```bash
-python3 scripts/voice-lock.py extract <file> --state <state>
+python3 scripts/quality/voice-lock.py extract <file> --state <state>
 ```
 Le sezioni successive devono mantenere voice profile (verifica in Step 4.5).
 
@@ -414,7 +414,7 @@ Le sezioni successive devono mantenere voice profile (verifica in Step 4.5).
 
 Esegui:
 ```bash
-bash scripts/self-check.sh <file> --lang=<it|en> --state=<state> --target-pages=<N>
+bash scripts/quality/self-check.sh <file> --lang=<it|en> --state=<state> --target-pages=<N>
 ```
 
 Orchestratore che lancia: word count, forbidden terms, AI tells, citation density, image references, citation keys, mock inventory consistency, readability (Gulpease/Flesch), tone-drift, voice-lock verify.
@@ -476,8 +476,8 @@ Loop: Step 5 → Step 4.5 → Step 5 finché clean / utente OK.
 Default attivo per: `analisi-codice`, `bug`, `codice` o se utente passa `--public`.
 
 ```bash
-python3 scripts/pii-redact.py <file> --mode=warn
-bash scripts/secret-scan.sh <file>
+python3 scripts/security/pii-redact.py <file> --mode=warn
+bash scripts/security/secret-scan.sh <file>
 ```
 
 - Secret trovato → BLOCCANTE. Chiedi rimozione/sostituzione con placeholder. Re-run.
@@ -490,7 +490,7 @@ Per modalità `--public`: applica `--mode=redact` direttamente.
 **Vedi `steps/step-6.7-layout-coherence.md`.**
 
 ```bash
-python3 scripts/layout-coherence.py <output>/RELAZIONE.md \
+python3 scripts/quality/layout-coherence.py <output>/RELAZIONE.md \
   --style=<accademico|moderno|brand> \
   --tipologia=<tipologia>
 ```
@@ -540,11 +540,11 @@ EPUB se richiesto: `pandoc <file>.md -o <file>.epub --toc --metadata title=... a
 **Vedi `steps/step-8-companion-artifacts.md`.**
 
 `AskUserQuestion` multi-select:
-- `Executive summary` → `python3 scripts/executive-summary.py`
-- `Slide deck` → `python3 scripts/slide-deck.py --engine={marp|beamer}`
+- `Executive summary` → `python3 scripts/export/executive-summary.py`
+- `Slide deck` → `python3 scripts/export/slide-deck.py --engine={marp|beamer}`
 - `EPUB` → comando pandoc
-- `Bundle .zip` → `bash scripts/bundle.sh <output_folder>`
-- `Defense pack` (solo `tesi`) → `python3 scripts/defense-pack.py`
+- `Bundle .zip` → `bash scripts/export/bundle.sh <output_folder>`
+- `Defense pack` (solo `tesi`) → `python3 scripts/export/defense-pack.py`
 
 I preset hanno `post_actions` che pre-selezionano companion da generare automaticamente.
 
@@ -578,7 +578,7 @@ L'audit trail è append-only: dopo `approved` non si modifica.
 
 ## NON-NEGOTIABLE RULES
 
-**1. Forbidden output (mai):** vedi `steps/forbidden-terms.md` — Claude/Anthropic/AI-refs/Co-Authored-By/AI tells stilistici. Auto-check con `scripts/forbidden-check.sh`.
+**1. Forbidden output (mai):** vedi `steps/forbidden-terms.md` — Claude/Anthropic/AI-refs/Co-Authored-By/AI tells stilistici. Auto-check con `scripts/quality/forbidden-check.sh`.
 
 **2. Mai inventare:** nomi persone, bibliografia, URL/DOI, dati fiscali, citazioni — sempre placeholder o fonte verificata. **Mai citare contenuto non attestato nel knowledge graph (`nodes.jsonl`) o in WebSearch.**
 

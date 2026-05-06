@@ -4,7 +4,7 @@ Opzionale. Attivato di default per tipologie `analisi-codice`, `bug`, `codice` (
 
 ## PII redaction
 
-Lo script `scripts/pii-redact.py <file> [--mode=warn|redact]` scansiona per:
+Lo script `scripts/security/pii-redact.py <file> [--mode=warn|redact]` scansiona per:
 
 - **Email**: regex `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}`
 - **IP address** (v4 + v6)
@@ -23,7 +23,7 @@ Modalità:
 
 ## Secret scan (per code snippet inclusi)
 
-Lo script `scripts/secret-scan.sh <file>` cerca pattern noti:
+Lo script `scripts/security/secret-scan.sh <file>` cerca pattern noti:
 
 - AWS access key: `AKIA[0-9A-Z]{16}`
 - AWS secret: regex base64 40-char

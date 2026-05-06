@@ -1,5 +1,43 @@
 # Changelog
 
+## 2.2.0 — 2026-05-06
+
+Riorganizzazione architetturale + onboarding migliorato + test automatici.
+
+### Aggiunte
+
+- **`/relazione-doctor`** — slash command per diagnostica ambiente. Implementazione: `scripts/workflow/doctor.py`. Documentazione: `steps/doctor.md`.
+- **`/relazione-setup`** — wizard al primo utilizzo (doctor + brand profile + Eisvogel). Implementazione: `scripts/workflow/setup.py`. Documentazione: `steps/setup.md`.
+- **`tests/`** — smoke test pytest:
+  - `test_doctor.py` — validazione output doctor (human + JSON)
+  - `test_schemas.py` — caricabilità di tutti i JSON Schema
+  - `test_scripts_importable.py` — tutti i Python script hanno shebang e parsano senza errori
+- **`.github/workflows/test.yml`** — CI su Linux/macOS/Windows × Python 3.10/3.11/3.12.
+- **`pytest.ini`** — configurazione test runner.
+
+### Modifiche
+
+- **Riorganizzazione `scripts/`** in 7 sottocartelle tematiche:
+  - `quality/` (17 script) — self-check, readability, tone, citations, layout, grammar, spell, plagio, accessibility, fact-check, cross-ref-lint, temporal, clarity, reviewer-simulator, voice-lock
+  - `security/` (7 script) — PII redact, secret scan, watermark utente, GPG sign, PDF redact/protect, integrity hash
+  - `export/` (14 script) — PDF/DOCX/EPUB/Typst/Quarto/HTML, slides, audiobook, dyslexia variant
+  - `intel/` (12 script) — citations, papers (arXiv/Semantic Scholar/Zotero), knowledge graph, schema-to-diagram, glossary
+  - `generators/` (12 script) — abstract, TOC, table-from-data, auto-diagram, RACI, RTM, Gantt, KPI, risk register, stakeholder map, defense simulator, bilingual generator
+  - `workflow/` (15 script) — state, brand, setup, doctor, auto-save, live-preview, progress, search, tags, audit trail, resolve variables, section regen
+  - `integrations/` (8 script, già esistente) — Jira, Linear, Confluence, Notion, SharePoint, Slack, Teams, Git
+- **Tutti i riferimenti aggiornati** in `SKILL.md`, `steps/*.md`, `presets/*.yaml`, `pdf-templates/README.md`, `docs/SKILL-GUIDE.md`, scripts che invocano altri scripts.
+- **`SKILL.md`** frontmatter esteso: aggiunti `/relazione-doctor` e `/relazione-setup` alla `description`.
+- **`README.md`** — sezione Test, sezione Diagnostica, struttura cartelle aggiornata.
+
+### Note di migrazione
+
+- **Path scripts cambiati**: ogni invocazione di `scripts/<X>` deve ora puntare alla sottocartella. Esempi:
+  - `scripts/self-check.sh` → `scripts/quality/self-check.sh`
+  - `scripts/pii-redact.py` → `scripts/security/pii-redact.py`
+  - `scripts/parallel-export.sh` → `scripts/export/parallel-export.sh`
+- Sessioni esistenti continuano a funzionare se la skill è aggiornata; preset salvati con path vecchi vanno rigenerati o aggiornati a mano.
+- Plugin esterni che chiamavano `scripts/<X>` direttamente: aggiornare il path.
+
 ## 2.1.01 — 2026-05-06
 
 Pulizia per pubblicazione open-source su `Bl4ckJackz/OpenReport`.
@@ -9,14 +47,14 @@ Pulizia per pubblicazione open-source su `Bl4ckJackz/OpenReport`.
 - **`README.md`** pubblico con quickstart, comandi, dipendenze e struttura del repo.
 - **`LICENSE`** MIT.
 - **`.gitattributes`** per normalizzare line endings (LF) cross-platform.
-- **`scripts/doctor.py`** — diagnostica delle dipendenze (required/recommended/optional). Supporta `--json` per integrazioni CI.
+- **`scripts/workflow/doctor.py`** — diagnostica delle dipendenze (required/recommended/optional). Supporta `--json` per integrazioni CI.
 - **`examples/`** — due esempi reali (status report, estratto tesi) come showcase e benchmark visivo.
 
 ### Modifiche
 
 - **`SKILL.md`** snellito: rimosse le sezioni "What's new" duplicate (vivono in `CHANGELOG.md`). Risparmio token per invocazione ~15%.
 - **Preset rinominati** da `mindsmart-*` a `example-brand-*`: `presets/mindsmart-tecnica.yaml` → `presets/example-brand-tecnica.yaml`, `pdf-templates/eisvogel-mindsmart.yaml` → `pdf-templates/eisvogel-example-brand.yaml`. Aggiornati tutti i riferimenti.
-- **`scripts/citation-enrich.py`** — User-Agent generico (`noreply@example.com`) al posto di indirizzo aziendale.
+- **`scripts/intel/citation-enrich.py`** — User-Agent generico (`noreply@example.com`) al posto di indirizzo aziendale.
 
 ### Note di migrazione
 
@@ -103,14 +141,14 @@ Qualità contenuto + ricerca avanzata + quality gates + export estesi + security
 
 **Collaboration**
 - `/relazione-workspace` — workspace multi-sessione (list/switch/create/archive/status/stats)
-- `scripts/tag-manager.py` — tag system per sessioni (add/remove/search/tags)
-- `scripts/full-text-search.sh` — ripgrep/grep full-text sulle sessioni passate
+- `scripts/workflow/tag-manager.py` — tag system per sessioni (add/remove/search/tags)
+- `scripts/workflow/full-text-search.sh` — ripgrep/grep full-text sulle sessioni passate
 - `/relazione-preset-import` — marketplace preset da URL/gist/path
 
 **Lingue aggiuntive**
 - Schema `lingua` esteso: spagnolo, francese, tedesco, portoghese (oltre italiano, inglese, italiano+inglese)
 - `forbidden-check.sh` esteso con AI-tells per ES/FR/DE/PT
-- `scripts/locale-format.py` — date/numeri/valute/percentuali per 6 lingue
+- `scripts/workflow/locale-format.py` — date/numeri/valute/percentuali per 6 lingue
 
 **AI writing coach**
 - `clarity-score.py` — score chiarezza 0-100 per sezione (frasi lunghe, passive, vague, complex)
@@ -125,7 +163,7 @@ Qualità contenuto + ricerca avanzata + quality gates + export estesi + security
 ### Modifiche
 
 - `schemas/session-state.schema.json`: `lingua` estesa con spagnolo/francese/tedesco/portoghese
-- `scripts/forbidden-check.sh`: 4 nuove lingue per AI-tells
+- `scripts/quality/forbidden-check.sh`: 4 nuove lingue per AI-tells
 
 ### Nuovi slash commands (+3)
 

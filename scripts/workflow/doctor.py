@@ -6,9 +6,9 @@ Checks required and optional dependencies, prints a status table, and
 exits non-zero if any REQUIRED tool is missing.
 
 Usage:
-    python scripts/doctor.py            # human-readable
-    python scripts/doctor.py --json     # machine-readable
-    python scripts/doctor.py --fix      # print install hints for missing tools
+    python scripts/workflow/doctor.py            # human-readable
+    python scripts/workflow/doctor.py --json     # machine-readable
+    python scripts/workflow/doctor.py --fix      # print install hints for missing tools
 """
 from __future__ import annotations
 

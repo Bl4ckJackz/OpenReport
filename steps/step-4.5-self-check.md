@@ -2,7 +2,7 @@
 
 Eseguito **dopo Step 4 (draft) e prima di Step 5 (follow-up)**. Anche subito prima di Step 6 (write finale).
 
-Lo script `scripts/self-check.sh <file>` esegue tutti i controlli e ritorna report strutturato.
+Lo script `scripts/quality/self-check.sh <file>` esegue tutti i controlli e ritorna report strutturato.
 
 ## Controlli obbligatori
 
@@ -17,7 +17,7 @@ FAIL if deviation > 0.40
 ```
 
 ### 2. Forbidden terms grep
-Esegui `scripts/forbidden-check.sh` (vedi `steps/forbidden-terms.md`).
+Esegui `scripts/quality/forbidden-check.sh` (vedi `steps/forbidden-terms.md`).
 - Match → FAIL, lista occorrenze + numero riga.
 
 ### 3. AI tells (Italiano + Inglese)

@@ -89,7 +89,7 @@ Tutti i campi sono risolti via placeholder. Esempio in template LaTeX:
 Poi, alla fine del Step 6, esegui:
 
 ```bash
-python3 scripts/resolve-variables.py <file> --state <state> --in-place
+python3 scripts/workflow/resolve-variables.py <file> --state <state> --in-place
 ```
 
 ## Quando saltare il control sheet
