@@ -1,12 +1,31 @@
 # Changelog
 
-## 2.4.0 — 2026-05-06
+## 2.4.1 — 2026-05-06
 
-Stima costi preventiva + workflow outline-first per documenti lunghi.
+Pulizia: la skill resta 100% gratuita per chi usa Claude Code.
+
+### Modifiche
+
+- **`scripts/workflow/estimate.py`** — riscritto. Rimossi prezzi €/$, modelli specifici, modalità batch. L'output ora è: token (input/output/totale), pressione % sul context window, durata sessione interattiva, raccomandazioni automatiche (outline-first, pausa + `/clear`, `--draft-only`).
+- **`steps/estimate.md`** — riallineato senza riferimenti a costi monetari o API a pagamento. Disclaimer esplicito: la skill gira in Claude Code, costo già incluso nell'abbonamento.
+- **`docs/PERFORMANCE.md`** — rimosse sezioni "Model routing" e "Batch API". Soften delle menzioni Memory tool / context editing (rilevanti solo per integrazioni SDK avanzate). Focus rimesso su gestione context window, knowledge graph, outline-first, sub-agent policy.
+- **`README.md`** — sezione Stima preventiva e Performance riallineate.
 
 ### Aggiunte
 
-- **`/relazione-estimate`** — stima preventiva di token, costo in €/$ e tempo, prima di partire. Confronta i 3 modelli (Haiku 4.5 / Sonnet 4.6 / Opus 4.7) in modalità sync e batch. Implementazione: `scripts/workflow/estimate.py`. Documentazione: `steps/estimate.md`.
+- **`tests/test_estimate.py`** — 5 smoke test: human output, JSON parse, invariante `input+output==total`, outline-first riduce output per pages ≥ 30, CLI rifiuta input mancante o non positivo.
+
+### Nessuna breaking change
+
+Lo schema `outline` introdotto in 2.4.0 resta. Tutti gli step e i path scripts sono invariati.
+
+## 2.4.0 — 2026-05-06
+
+Stima preventiva + workflow outline-first per documenti lunghi.
+
+### Aggiunte
+
+- **`/relazione-estimate`** — stima preventiva prima di partire. Implementazione: `scripts/workflow/estimate.py`. Documentazione: `steps/estimate.md`. *(Riscritto in 2.4.1 senza riferimenti a costi monetari.)*
 - **Step 3.6 — Outline-first review** (opzionale, attivo per pages ≥ 30): genera prima la struttura (~2.5k token), la sottoponi all'utente per approvazione, poi Step 4 espande dall'outline approvato. Vantaggi: −30% token output, −40% iterazioni refinement. Documentazione: `steps/step-3.6-outline.md`.
 - **Schema esteso**: `schemas/session-state.schema.json` ha ora il blocco `outline` (`approved`, `version`, `path`, `section_count`, `subsection_count`, `generated_at`, `approved_at`).
 

@@ -43,7 +43,7 @@ Versione corrente: vedi [`VERSION`](./VERSION) — changelog completo in [`CHANG
 | `/relazione-preset-import` | Importa preset da URL (gist/GitHub) |
 | `/relazione-doctor` | Diagnostica ambiente (dipendenze required/recommended/optional) |
 | `/relazione-setup` | Wizard al primo utilizzo (brand profile + Eisvogel + doctor) |
-| `/relazione-estimate` | Stima preventiva di token, costo (€/$), e tempo prima di iniziare |
+| `/relazione-estimate` | Stima preventiva di token, pressione context-window e tempo prima di iniziare |
 
 ## Installazione
 
@@ -74,13 +74,13 @@ Il file `SKILL.md` è compatibile con il formato Anthropic Skills. Per Gemini CL
 
 ## Stima preventiva
 
-Prima di iniziare una relazione lunga puoi stimare token, costo e tempo:
+Prima di iniziare una relazione lunga puoi stimare token attesi, pressione sul context window e durata:
 
 ```bash
 python scripts/workflow/estimate.py --tipologia tesi --pages 80 --online --outline-first
 ```
 
-Confronta i 3 modelli (Haiku 4.5 / Sonnet 4.6 / Opus 4.7) in modalità sync e batch, mostrando il risparmio massimo. Stima ±30%. Vedi [`steps/estimate.md`](./steps/estimate.md).
+Output: token input/output/totali, percentuale di context window utilizzato al picco, raccomandazioni automatiche (attiva outline-first, pianifica pausa, considera `--draft-only`). Stima ±30%. Vedi [`steps/estimate.md`](./steps/estimate.md).
 
 ## Outline-first (per documenti ≥ 30 pagine)
 
@@ -187,13 +187,14 @@ Vedi [`examples/`](./examples/) — output reali della skill (anonimizzati) per 
 
 ## Performance
 
-Vedi [`docs/PERFORMANCE.md`](./docs/PERFORMANCE.md) — playbook su token efficiency, prompt caching, model routing per fase, sub-agent policy, e quando attivare la Memory tool ufficiale o la Batch API.
+Vedi [`docs/PERFORMANCE.md`](./docs/PERFORMANCE.md) — playbook su gestione context window, knowledge graph come single source of truth, outline-first per documenti lunghi, sub-agent policy, modalità `--draft-only`.
 
 Numeri chiave:
 
-- `SKILL.md` body: ~530 righe (~7.3k token caricati per turno)
+- `SKILL.md` body: ~556 righe (~7.5k token caricati per turno)
 - Knowledge graph hash-128 in `.session/knowledge/` riduce re-read del 60–80%
 - Sub-agent solo per output verboso (>5k righe) o parallelizzazione genuina (4+ task indipendenti) — costo startup ~20k token
+- Outline-first risparmia ~30% output su documenti ≥ 30 pp
 
 ## Test
 

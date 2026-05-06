@@ -15,6 +15,7 @@ pytest tests/test_doctor.py -v  # un singolo file
 | File | Script testato | Cosa verifica |
 |---|---|---|
 | `test_doctor.py` | `scripts/workflow/doctor.py` | Esegue il doctor in modalità `--json`, parse del payload, presenza chiavi attese |
+| `test_estimate.py` | `scripts/workflow/estimate.py` | Esegue estimate human + JSON, valida invarianti (input+output=total, peak%, sconto outline-first), CLI errors |
 | `test_resolve_variables.py` | `scripts/workflow/resolve-variables.py` | Sostituzione `{{placeholder}}` con valori da file vars |
 | `test_layout_coherence.py` | `scripts/quality/layout-coherence.py` | Documento valido passa, frontespizio fuori posto fallisce |
 | `test_pii_redact.py` | `scripts/security/pii-redact.py` | Email, IP, codici fiscali vengono mascherati |

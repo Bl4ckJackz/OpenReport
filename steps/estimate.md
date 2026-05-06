@@ -1,11 +1,13 @@
 # /relazione-estimate
 
-Stima preventiva di token, costo (USD/EUR), e tempo per generare una relazione, prima di iniziare. Aiuta a decidere:
+Stima preventiva di **token, pressione sul context window, e tempo** per generare una relazione, prima di iniziare. Aiuta a decidere:
 
 - Se attivare outline-first (Step 3.6)
-- Quale modello usare (Haiku vs Sonnet vs Opus)
-- Se vale Batch API (sync vs batch)
-- Se conviene ridurre target di pagine
+- Se pianificare una pausa + `/clear` per liberare context
+- Se conviene la modalità `--draft-only`
+- Quanto durerà la sessione interattiva
+
+> La skill gira dentro Claude Code: il costo è già incluso nell'abbonamento. Questo strumento riguarda **gestione del context**, non costi monetari.
 
 ## Esecuzione
 
@@ -15,9 +17,6 @@ python scripts/workflow/estimate.py \
     --pages 80 \
     --lingua italiano \
     --online --outline-first
-
-# Modello specifico (default: confronta tutti)
-python scripts/workflow/estimate.py --tipologia tecnica --pages 30 --model sonnet-4.6
 
 # Output JSON per integrazione
 python scripts/workflow/estimate.py --pages 50 --json
@@ -30,8 +29,6 @@ python scripts/workflow/estimate.py --pages 50 --json
 | `--tipologia` | `generica` | Cosmetico (appare nell'header) |
 | `--pages` | (richiesto) | Pagine A4 attese |
 | `--lingua` | `italiano` | Cosmetico |
-| `--model` | `all` | `haiku-4.5`, `sonnet-4.6`, `opus-4.7`, o `all` |
-| `--mode` | `all` | `sync`, `batch`, o `all` |
 | `--online` | off | Conta ricerca online (input +N×150, max +8k) |
 | `--mock` | off | Conta tracking mock data |
 | `--outline-first` | off | Conta sconto Step 3.6 (~−30% output se pages >= 30) |
@@ -47,26 +44,33 @@ Token usage (heuristic, ±30%):
   Output:   63,900 tokens
   Total:    87,900 tokens
 
-Model          Mode         EUR      USD  Time
-------------------------------------------------------------
-haiku-4.5      sync       0.316    0.344  120–240m
-haiku-4.5      batch      0.158    0.172  10m–24h
-sonnet-4.6     sync       0.948    1.030  120–240m
-sonnet-4.6     batch      0.474    0.515  10m–24h
-opus-4.7       sync       4.740    5.152  120–240m
-opus-4.7       batch      2.370    2.576  10m–24h
+Context-window pressure: 44% di 200,000
+  -> moderate
 
-Risparmio max scegliendo haiku-4.5 batch: €4.582
+Tempo sessione interattiva (Step 1 -> Step 9): 120-240 minuti
+  (1.5-3 min/pagina; setup veloce o codebase piccolo accorcia)
+
+Modificatori applicati: ricerca online (+input fino a 8,000).
+
+Raccomandazioni:
+  - Attiva --outline-first: per pages >= 60 risparmia ~30% output ...
 ```
+
+## Verdetti context pressure
+
+| Peak % | Verdetto | Cosa fare |
+|---|---|---|
+| < 30% | `comfortable` | Procedi normalmente |
+| 30–60% | `moderate` | OK, ma prepara checkpoint a Step 5 |
+| 60–90% | `tight` | Pausa + `/clear` raccomandata a Step 5 |
+| > 90% | `over budget` | Spezza in 2 sessioni o usa `--draft-only` |
 
 ## Limiti / disclaimer
 
 - **Stima ±30%**: l'uso reale dipende da quanto refinement chiede l'utente
-- **Tasso EUR/USD** è hardcoded a 0.92 — aggiorna `USD_TO_EUR` nello script per cambi importanti
-- **Pricing**: i numeri sono list price Anthropic gennaio 2026. Verifica su [anthropic.com/pricing](https://www.anthropic.com/pricing) prima di pianificare bulk
-- **Time sync**: 1.5–3 min/pagina è una media generosa; setup veloce (<10 file scansionati) accorcia, codebase grandi allungano
-- **Time batch**: target Anthropic <1h, ma SLA contrattuale 24h
+- **Time**: 1.5–3 min/pagina è una media; setup veloce (<10 file scansionati) accorcia, codebase grandi allungano
+- **Context window**: il default 200k è prudente. Sonnet 4.6 in Claude Code supporta finestre più ampie; lo stimatore resta conservativo per evitare sorprese
 
 ## Behavior nello skill flow
 
-A Step 1 (dopo che `pages` è risposto), se `pages >= 30`, considera invocare automaticamente questo script in modalità `--json` e mostrare costo/tempo all'utente come parte della conferma. Specialmente utile prima di Step 3.9 (token budget guard).
+A Step 1 (dopo che `pages` è risposto), se `pages >= 30`, considera invocare automaticamente questo script in modalità `--json` e mostrare i numeri all'utente come parte della conferma. Specialmente utile prima di Step 3.9 (token budget guard).
