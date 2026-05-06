@@ -44,6 +44,7 @@ Versione corrente: vedi [`VERSION`](./VERSION) — changelog completo in [`CHANG
 | `/relazione-doctor` | Diagnostica ambiente (dipendenze required/recommended/optional) |
 | `/relazione-setup` | Wizard al primo utilizzo (brand profile + Eisvogel + doctor) |
 | `/relazione-estimate` | Stima preventiva di token, pressione context-window e tempo prima di iniziare |
+| `/relazione-help` | Mostra il welcome con cosa fa la skill e la sequenza di comandi per usarla al 100% |
 
 ## Installazione
 
@@ -152,21 +153,28 @@ schemas/            # JSON Schema per validazione (session-state, brand, user)
 
 ## Esempio di utilizzo
 
+Alla prima invocazione la skill ti mostra cosa fa e la sequenza di comandi consigliata. Tra una fase e l'altra ti dice esplicitamente quale comando lanciare poi (pattern `→ Next:`).
+
 ```
 $ cd ~/progetti/tesi-magistrale/
 $ claude
 > /relazione
 
-[la skill scansiona la cwd, fa 9 domande, propone preset "tesi-magistrale"]
+[Welcome con la sequenza tipica + 9-11 domande iniziali]
+[Scan, knowledge graph, draft, self-check, layout-check, export]
+→ Next: artifact pronti. Step 8 ti chiede quali companion vuoi.
 
 > /relazione-review
-[promuove a in-review, watermarka il PDF "FOR REVIEW"]
+[promuove a 'in-review', watermarka il PDF "FOR REVIEW"]
+→ Next: condividi il PDF. Quando ricevi feedback DOCX: /relazione-import-feedback <file>
 
 > /relazione-import-feedback revisione-prof.docx
 [importa i commenti del docente, propone fix per ciascuno]
+→ Next: ho applicato N suggerimenti. /relazione per riaprire e continuare.
 
 > /relazione-approve
-[stampa data approvazione, archivia versione finale]
+[stampa data approvazione, archivia versione finale, audit log]
+→ Next: relazione approvata e archiviata. Versione finale in archive/v1.0/.
 ```
 
 ## Privacy & sicurezza

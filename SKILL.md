@@ -1,6 +1,6 @@
 ---
 name: relazione
-description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente, /relazione-doctor, /relazione-setup, /relazione-estimate or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
+description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente, /relazione-doctor, /relazione-setup, /relazione-estimate, /relazione-help or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
 ---
 
 # Relazione (Report Writer)
@@ -22,9 +22,41 @@ Skill modulare per generare relazioni formali in Italiano/Inglese a partire dai 
 
 **Core principle:** la relazione DEVE leggersi come scritta dall'utente. Mai riferimenti a Claude, Anthropic, AI, "generato da intelligenza artificiale", disclaimers, o `Co-Authored-By: Claude`. Il testo è dell'utente. Assoluto. Vedi `steps/forbidden-terms.md` per la lista completa.
 
+## User communication contract
+
+La skill è autodocumentante. Comunica all'utente in modo esplicito:
+
+1. **All'apertura** (prima invocazione, nessuna sessione esistente) — mostra il *welcome* (vedi sotto) prima di qualsiasi domanda.
+2. **Tra le fasi** — alla fine di ogni step principale (Step 4 draft pronto, Step 7 export pronto, Step 8 ready-for-approval, Step 9 approved), stampa una riga `→ Next:` con il comando esatto da lanciare poi.
+3. **In errore** — se manca un tool o lo state è incoerente, suggerisci sempre il comando di rimedio (`/relazione-doctor`, `/relazione-rollback`, `/relazione-continua`).
+
+### Welcome (prima invocazione, sessione nuova)
+
+Quando `/relazione` è invocato e Step 0 ha trovato 0 cartelle `relazioni*/`, prima di partire con le domande **mostra il welcome message** (cosa fa la skill + sequenza tipica di 7 comandi per uso 100% + comandi anytime). Testo completo in `steps/help.md`. Termina con: «Procediamo? Step 1 ti fa 9-11 domande iniziali» e attende ack.
+
+Skip welcome se `--no-intro` flag o `.user-profile.json` ha `seen_intro: true`.
+
+### Pattern "→ Next"
+
+Alla fine di ciascuna di queste fasi, stampa la riga indicata:
+
+| Fase completata | Stampa |
+|---|---|
+| Step 0 resume con sessione caricata | `→ Next: continuo da step-N. Se vuoi fermarti, dimmelo.` |
+| Step 4 (draft pronto) | `→ Next: rivediamo insieme il draft (Step 5). Se vuoi pausare: Pausa + /clear, poi /relazione-continua.` |
+| Step 6.7 layout coherence OK | `→ Next: procedo all'export (Step 7).` |
+| Step 7 export completo | `→ Next: artifact pronti. Step 8 ti chiede quali companion vuoi (executive summary, slide deck, EPUB, bundle .zip).` |
+| Step 8 → ready-for-approval | `→ Next: per finalizzare, lancia /relazione-approve. Se prima vuoi una revisione esterna: /relazione-review (aggiunge watermark FOR REVIEW).` |
+| /relazione-review eseguito | `→ Next: condividi il PDF watermarked. Quando ricevi feedback DOCX: /relazione-import-feedback <file>.docx` |
+| /relazione-approve eseguito | `→ Next: relazione approvata e archiviata. Versione finale in <output>/archive/v<x>/. Sessione completata.` |
+| /relazione-import-feedback | `→ Next: ho applicato N suggerimenti. Lancia /relazione per riaprire e continuare il refinement, poi /relazione-approve.` |
+| Errore tool mancante | `→ Next: lancia /relazione-doctor per diagnosticare.` |
+
+Le righe `→ Next:` devono essere l'**ultima** comunicazione del turno (dopo l'output normale, prima dell'attesa input). Se la fase richiede una `AskUserQuestion`, includi il next come testo nel prompt della domanda, non in un messaggio separato.
+
 ## When to Use
 
-- Comandi: `/relazione`, `/relazione-quick`, `/relazione-continua`, `/relazione-rollback`, `/relazione-stats`, `/relazione-diff`, `/relazione-doctor`, `/relazione-setup`, `/relazione-estimate`
+- Comandi: `/relazione`, `/relazione-quick`, `/relazione-continua`, `/relazione-rollback`, `/relazione-stats`, `/relazione-diff`, `/relazione-doctor`, `/relazione-setup`, `/relazione-estimate`, `/relazione-help`
 - Richieste in linguaggio naturale: "scrivimi una relazione", "fammi la relazione su…", "prepara un report di…", "write a report about…"
 - Documentare progetto, esperienza, tesi, ricerca, lab, stage, codebase, bug, incidente
 

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.5.0 — 2026-05-06
+
+User communication contract — la skill è autodocumentante.
+
+### Aggiunte
+
+- **Welcome message** alla prima invocazione di `/relazione` (Step 0 con 0 cartelle): cosa fa la skill, sequenza tipica di 7 comandi per uso 100%, comandi anytime, comandi avanzati. Skip se `--no-intro` o `.user-profile.json` ha `seen_intro: true`.
+- **`/relazione-help`** — slash command che mostra il welcome on-demand. Documentazione: `steps/help.md`.
+- **Pattern `→ Next:`** — alla fine di ogni fase principale (Step 4 draft, Step 6.7 layout OK, Step 7 export, Step 8 ready-for-approval, Step 9 approved, /relazione-review, /relazione-import-feedback) la skill stampa una riga `→ Next: <comando>` con il prossimo passo esplicito (pattern ispirato a GSD).
+- **Sezione "User communication contract"** in SKILL.md formalizza i 3 momenti di comunicazione: apertura, transizioni di fase, errore.
+
+### Modifiche
+
+- `SKILL.md` — aggiunto User communication contract + welcome + tabella `→ Next:` (~50 righe). Frontmatter `description` esteso a `/relazione-help`.
+- `README.md` — esempio di utilizzo aggiornato per mostrare il pattern `→ Next:`. Comandi aggiornati con `/relazione-help`.
+
+### Nessuna breaking change
+
+Lo state machine, le firme dei comandi, gli script restano invariati. Solo il livello di comunicazione utente è arricchito.
+
 ## 2.4.1 — 2026-05-06
 
 Pulizia: la skill resta 100% gratuita per chi usa Claude Code.
