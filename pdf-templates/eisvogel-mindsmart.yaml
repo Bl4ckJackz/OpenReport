@@ -1,0 +1,58 @@
+---
+# Mindsmart brand template for Eisvogel
+# Colori default — sostituisci con brand colors ufficiali Mindsmart se disponibili.
+
+lang: it-IT
+geometry: a4paper,margin=2.2cm,top=2.5cm,bottom=2.5cm
+
+# Title page
+titlepage: true
+titlepage-color: "1E3A8A"             # blu profondo (Mindsmart primary placeholder)
+titlepage-text-color: "FFFFFF"
+titlepage-rule-color: "06B6D4"        # cyan accent
+titlepage-rule-height: 4
+titlepage-background: ""               # opzionale: path a immagine sfondo (.pdf/.png)
+titlepage-logo: ""                     # opzionale: path a logo (centrato in alto)
+logo-width: "100mm"
+
+# Tipografia
+fontsize: 11pt
+mainfont: "Calibri"                    # cambia in "Helvetica" / "Source Sans Pro" se Calibri non disponibile
+sansfont: "Calibri"
+monofont: "Consolas"
+linestretch: 1.25
+
+# Indice
+toc: true
+toc-own-page: true
+toc-depth: 3
+numbersections: true
+
+# Link
+colorlinks: true
+linkcolor: "1E3A8A"
+urlcolor: "06B6D4"
+citecolor: "1E3A8A"
+
+# Code blocks
+listings: true
+listings-disable-line-numbers: false
+listings-no-page-break: false
+
+# Tabelle
+tables: true
+table-use-row-colors: true
+
+# Header / Footer
+book: false
+header-left: ""
+header-center: ""
+header-right: "\\thepage"
+footer-left: "Mindsmart"
+footer-center: ""
+footer-right: ""
+
+# Page break su sezione
+section-titles: true
+disable-header-and-footer: false
+---

@@ -1,0 +1,38 @@
+% Frontespizio Tesi — Università degli Studi di Padova
+% Usage: \input{unipd-tesi.tex} nel preamble di una tesi in classe report/book
+% Richiede: xcolor, graphicx, fontspec (XeLaTeX/LuaLaTeX)
+
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+  \includegraphics[width=0.35\textwidth]{logo-unipd}\\[0.5cm]
+  {\scshape\LARGE Università degli Studi di Padova\par}
+  \vspace{0.3cm}
+  {\scshape\Large \variable{dipartimento}\par}
+  \vspace{0.3cm}
+  {\large \variable{corso_di_laurea}\par}
+  \vspace{1.5cm}
+  \rule{\textwidth}{0.5pt}\\[0.4cm]
+  {\huge\bfseries \variable{titolo_tesi}\par}
+  \vspace{0.3cm}
+  \rule{\textwidth}{0.5pt}\\[1.5cm]
+  \begin{minipage}{0.45\textwidth}
+    \begin{flushleft}\large
+      \emph{Relatore:}\\
+      \variable{relatore}\\[0.3cm]
+      \ifx\variable{correlatore}\empty\else
+      \emph{Correlatore:}\\
+      \variable{correlatore}
+      \fi
+    \end{flushleft}
+  \end{minipage}\hfill
+  \begin{minipage}{0.45\textwidth}
+    \begin{flushright}\large
+      \emph{Laureando:}\\
+      \variable{autore}\\
+      \emph{Matricola:} \variable{matricola}
+    \end{flushright}
+  \end{minipage}
+  \vfill
+  {\large Anno Accademico \variable{anno_accademico}\par}
+\end{titlepage}

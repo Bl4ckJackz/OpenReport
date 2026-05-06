@@ -1,0 +1,26 @@
+profile_name: "Compliance report (GDPR/ISO/SOC2)"
+description: "Report conformità con control matrix, gap analysis, evidenze, action plan."
+
+answers:
+  tipologia: "compliance-report"
+  lingua: "italiano"
+  stile: "formale evidence-based"
+  destinatario: "azienda / committente / regolatore"
+  lunghezza_target_pagine: 40
+  elementi_visivi: ["tabelle", "schemi"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "report"
+  bibliografia: "biblatex"
+  pdf_style: "accademico"
+
+cover_defaults:
+  classificazione: "confidential"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-default-it.yaml"
+
+post_actions:
+  - executive-summary
+  - bundle

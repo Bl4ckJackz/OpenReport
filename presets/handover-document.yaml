@@ -1,0 +1,25 @@
+profile_name: "Handover document"
+description: "Passaggio di consegne con accessi, procedure, runbook, knowledge transfer plan."
+
+answers:
+  tipologia: "handover"
+  lingua: "italiano"
+  stile: "operativo esaustivo"
+  destinatario: "team interno / committente"
+  lunghezza_target_pagine: 20
+  elementi_visivi: ["tabelle", "schemi"]
+  formato: "md"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+  classe_latex: ""
+  bibliografia: "nessuna"
+  pdf_style: "moderno"
+
+cover_defaults:
+  classificazione: "confidential"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-relazione.yaml"
+
+post_actions:
+  - bundle

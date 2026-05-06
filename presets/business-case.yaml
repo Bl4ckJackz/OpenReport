@@ -1,0 +1,27 @@
+profile_name: "Business Case"
+description: "Giustificazione economica di un investimento con NPV, IRR, payback, scenari sensitività, risk register."
+
+answers:
+  tipologia: "business-case"
+  lingua: "italiano"
+  stile: "executive"
+  destinatario: "team interno / direzione"
+  lunghezza_target_pagine: 25
+  elementi_visivi: ["tabelle", "grafici", "risk-register"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "article"
+  bibliografia: "biblatex"
+  pdf_style: "moderno"
+
+cover_defaults:
+  classificazione: "internal"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-relazione.yaml"
+
+post_actions:
+  - executive-summary
+  - slide-deck
+  - bundle

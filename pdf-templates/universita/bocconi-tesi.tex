@@ -1,0 +1,80 @@
+% =====================================================================
+% Università Bocconi — Tesi triennale/magistrale
+% Layout conforme alle indicazioni Bocconi (verifica con segreteria)
+% =====================================================================
+\documentclass[12pt,a4paper,oneside,openright]{report}
+
+\usepackage[italian]{babel}                  % cambia in [english] se tesi in EN
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, inner=3cm, outer=2.5cm}
+\usepackage[backend=biber,style=apa]{biblatex}    % Bocconi spesso richiede APA
+\addbibresource{references.bib}
+
+\begin{document}
+
+% ==================== FRONTESPIZIO BOCCONI ====================
+\begin{titlepage}
+\centering
+\vspace*{1cm}
+
+\includegraphics[width=5cm]{logo-bocconi.png}\\[1.5cm]
+
+{\large \textbf{Università Commerciale Luigi Bocconi}}\\[0.3cm]
+{\normalsize [Master of Science] in [Data Science and Business Analytics]}\\[3cm]
+
+{\Huge \textbf{[Title of the thesis]}}\\[3cm]
+
+\begin{minipage}{0.45\textwidth}
+\begin{flushleft}
+\textbf{Supervisor / Advisor:}\\
+[Prof. First Last]\\[0.4cm]
+\textbf{Co-supervisor (if any):}\\
+[Prof. First Last]
+\end{flushleft}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\begin{flushright}
+\textbf{Candidate:}\\
+[First Last]\\
+ID number: [3123456]
+\end{flushright}
+\end{minipage}
+
+\vfill
+{\large Academic Year [2025/2026]}
+\end{titlepage}
+
+% ==================== ABSTRACT ====================
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+[English abstract 250-400 words]
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\chapter{Introduction}
+[Content...]
+
+\chapter{Literature review}
+[Content...]
+
+\chapter{Methodology}
+[Content...]
+
+\chapter{Empirical analysis}
+[Content...]
+
+\chapter{Discussion and conclusions}
+[Content...]
+
+\printbibliography[heading=bibintoc, title={References}]
+
+\appendix
+\chapter{[Appendix]}
+
+\end{document}

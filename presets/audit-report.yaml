@@ -1,0 +1,26 @@
+profile_name: "Audit report"
+description: "Audit interno/esterno con finding severity-classified, control matrix, evidenze, piano remediation."
+
+answers:
+  tipologia: "audit-report"
+  lingua: "italiano"
+  stile: "formale fattuale"
+  destinatario: "azienda / committente / direzione"
+  lunghezza_target_pagine: 30
+  elementi_visivi: ["tabelle", "risk-register"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+  classe_latex: "report"
+  bibliografia: "biblatex"
+  pdf_style: "accademico"
+
+cover_defaults:
+  classificazione: "confidential"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-default-it.yaml"
+
+post_actions:
+  - executive-summary
+  - bundle

@@ -1,0 +1,42 @@
+% Frontespizio Tesi — Università degli Studi di Napoli "Federico II"
+% Richiede: xcolor, graphicx, fontspec
+
+\begin{titlepage}
+  \centering
+  \vspace*{0.5cm}
+  \includegraphics[width=0.28\textwidth]{logo-federico2}\\[0.3cm]
+  {\scshape\LARGE Università degli Studi di Napoli\par}
+  {\scshape\huge\bfseries Federico II\par}
+  \vspace{0.3cm}
+  {\large Scuola Politecnica e delle Scienze di Base\par}
+  \vspace{0.2cm}
+  {\large Dipartimento di \variable{dipartimento}\par}
+  \vspace{0.2cm}
+  {\large Corso di Laurea \variable{livello} in \variable{corso_di_laurea}\par}
+  \vspace{1.5cm}
+  {\Large Tesi di Laurea \variable{livello}\par}
+  \vspace{0.8cm}
+  \rule{0.85\textwidth}{1.5pt}\\[0.5cm]
+  {\Huge\bfseries \variable{titolo_tesi}\par}
+  \vspace{0.3cm}
+  \rule{0.85\textwidth}{1.5pt}\\[1.8cm]
+  \begin{minipage}{0.48\textwidth}
+    \begin{flushleft}\large
+      \textbf{Relatore}\\
+      Ch.mo Prof. \variable{relatore}\\[0.3cm]
+      \ifx\variable{correlatore}\empty\else
+      \textbf{Correlatore}\\
+      \variable{correlatore}
+      \fi
+    \end{flushleft}
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \begin{flushright}\large
+      \textbf{Candidato}\\
+      \variable{autore}\\
+      matr. \variable{matricola}
+    \end{flushright}
+  \end{minipage}
+  \vfill
+  {\large Anno Accademico \variable{anno_accademico}\par}
+\end{titlepage}

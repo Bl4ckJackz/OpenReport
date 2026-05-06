@@ -1,0 +1,25 @@
+profile_name: "Weekly Status Report"
+description: "Status report settimanale compatto con RAG status, milestone tracking, top risks, decisioni richieste."
+
+answers:
+  tipologia: "status-report"
+  lingua: "italiano"
+  stile: "executive compatto"
+  destinatario: "azienda / committente"
+  lunghezza_target_pagine: 3
+  elementi_visivi: ["tabelle", "grafici", "gantt"]
+  formato: "md"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+  classe_latex: ""
+  bibliografia: "nessuna"
+  pdf_style: "moderno"
+
+cover_defaults:
+  classificazione: "internal"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-relazione.yaml"
+
+post_actions:
+  - bundle

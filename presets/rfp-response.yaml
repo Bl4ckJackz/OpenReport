@@ -1,0 +1,27 @@
+profile_name: "Risposta a RFP / Gara"
+description: "Risposta a gara pubblica o privata con tabella conformità punto-per-punto, piano qualità, allegati."
+
+answers:
+  tipologia: "rfp-response"
+  lingua: "italiano"
+  stile: "formale istituzionale"
+  destinatario: "azienda / committente"
+  lunghezza_target_pagine: 50
+  elementi_visivi: ["tabelle", "schemi", "gantt", "raci", "risk-register"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "report"
+  bibliografia: "biblatex"
+  pdf_style: "brand"
+  brand_profile: "mindsmart"
+
+cover_defaults:
+  classificazione: "confidential"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+
+post_actions:
+  - executive-summary
+  - bundle

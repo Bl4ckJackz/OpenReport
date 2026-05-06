@@ -1,0 +1,45 @@
+---
+# Tesi modernizzata — più calda di una classica article, ma sempre seria
+# Per chi vuole una tesi un po' meno "muro di testo classico" mantenendo rigore
+lang: it-IT
+geometry: a4paper,top=3cm,bottom=3cm,inner=3cm,outer=2.5cm
+documentclass: scrreprt                # KOMA-Script report (più curato di report stock)
+
+titlepage: true
+titlepage-color: "0F172A"               # navy profondo
+titlepage-text-color: "F1F5F9"
+titlepage-rule-color: "F59E0B"          # amber accent (richiama tradizione accademica)
+titlepage-rule-height: 3
+
+fontsize: 11pt
+mainfont: "Cambria"                      # serif, più adatto a tesi lunghe da leggere
+sansfont: "Calibri"
+monofont: "Consolas"
+linestretch: 1.35                         # interlinea generosa per leggibilità tesi
+
+toc: true
+toc-own-page: true
+toc-depth: 4
+lof: true                                  # list of figures
+lot: true                                  # list of tables
+numbersections: true
+secnumdepth: 3
+
+colorlinks: true
+linkcolor: "0F172A"
+urlcolor: "0F172A"
+citecolor: "0F172A"
+
+listings: true
+tables: true
+
+book: true                                 # capitoli su pagina destra
+chapter-on-right: true
+
+header-left: "\\nouppercase{\\leftmark}"
+header-right: "\\thepage"
+footer-left: ""
+footer-right: ""
+
+bibliography-style: "alphabetic"
+---

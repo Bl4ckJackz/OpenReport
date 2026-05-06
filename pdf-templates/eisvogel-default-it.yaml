@@ -1,0 +1,30 @@
+---
+# Default italiano — neutro, sobrio, no brand
+lang: it-IT
+geometry: a4paper,margin=2.5cm
+
+titlepage: true
+titlepage-color: "F5F5F5"              # grigio chiarissimo
+titlepage-text-color: "1A1A1A"
+titlepage-rule-color: "333333"
+titlepage-rule-height: 2
+
+fontsize: 11pt
+linestretch: 1.2
+
+toc: true
+toc-own-page: true
+toc-depth: 3
+numbersections: true
+
+colorlinks: true
+linkcolor: "1A1A1A"
+urlcolor: "0066CC"
+citecolor: "1A1A1A"
+
+listings: true
+tables: true
+
+book: false
+header-right: "\\thepage"
+---

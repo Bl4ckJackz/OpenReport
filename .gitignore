@@ -1,0 +1,4 @@
+.brand-profile.json
+.user-profile.json
+.session/
+*.err

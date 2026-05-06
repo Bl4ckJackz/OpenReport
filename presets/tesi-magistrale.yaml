@@ -1,0 +1,25 @@
+profile_name: "Tesi magistrale — italiana"
+description: "Tesi di laurea magistrale italiana. LaTeX classe report con biblatex/biber. Range 60-150 pagine, accademico rigoroso, online research mandatorio."
+
+answers:
+  tipologia: "tesi"
+  lingua: "italiano"
+  stile: "formale accademico"
+  destinatario: "commissione di laurea"
+  lunghezza_target_pagine: 80
+  elementi_visivi: ["tabelle", "schemi", "grafici"]
+  formato: "latex"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "report"
+  bibliografia: "biblatex"
+
+cover_defaults:
+  autore: "Dominik Duda"
+  ente: "[università da inserire]"
+
+post_actions:
+  - bundle
+  - executive-summary
+  - slides       # discussione tesi
+  - defense-pack

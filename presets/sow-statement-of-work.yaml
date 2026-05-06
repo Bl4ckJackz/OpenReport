@@ -1,0 +1,26 @@
+profile_name: "Statement of Work (SOW)"
+description: "Accordo operativo post-contratto con deliverable, milestone, RACI, pricing."
+
+answers:
+  tipologia: "sow"
+  lingua: "italiano"
+  stile: "formale contrattuale"
+  destinatario: "azienda / committente"
+  lunghezza_target_pagine: 15
+  elementi_visivi: ["tabelle", "gantt", "raci"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+  classe_latex: "article"
+  bibliografia: "nessuna"
+  pdf_style: "brand"
+  brand_profile: "mindsmart"
+
+cover_defaults:
+  classificazione: "confidential"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+
+post_actions:
+  - bundle

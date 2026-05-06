@@ -1,0 +1,28 @@
+profile_name: "Whitepaper tecnico / thought leadership"
+description: "Whitepaper per lead generation e brand positioning. Storytelling autorevole con fonti e case study."
+
+answers:
+  tipologia: "whitepaper"
+  lingua: "italiano"
+  stile: "autorevole divulgativo"
+  destinatario: "pubblico generico / prospect"
+  lunghezza_target_pagine: 15
+  elementi_visivi: ["tabelle", "grafici", "schemi"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "article"
+  bibliografia: "biblatex"
+  pdf_style: "brand"
+  brand_profile: "mindsmart"
+
+cover_defaults:
+  classificazione: "public"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+
+post_actions:
+  - executive-summary
+  - slide-deck
+  - bundle

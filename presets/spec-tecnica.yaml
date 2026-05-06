@@ -1,0 +1,25 @@
+profile_name: "Specifica Tecnica / Architecture Design"
+description: "Architettura C4, stack scelte con ADR, threat model, observability, deployment, DR plan."
+
+answers:
+  tipologia: "spec-tecnica"
+  lingua: "italiano"
+  stile: "tecnico rigoroso"
+  destinatario: "team interno"
+  lunghezza_target_pagine: 50
+  elementi_visivi: ["tabelle", "schemi"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "report"
+  bibliografia: "biblatex"
+  pdf_style: "moderno"
+
+cover_defaults:
+  classificazione: "internal"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-relazione.yaml"
+
+post_actions:
+  - bundle

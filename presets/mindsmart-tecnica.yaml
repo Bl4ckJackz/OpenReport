@@ -1,0 +1,25 @@
+profile_name: "Mindsmart — Relazione tecnica cliente"
+description: "Default per relazioni tecniche di progetto consegnate ai clienti Mindsmart. Stile semi-formale aziendale, sia md che pdf moderno con brand Mindsmart."
+
+answers:
+  tipologia: "tecnica"
+  lingua: "italiano"
+  stile: "semi-formale aziendale"
+  destinatario: "cliente / committente"
+  lunghezza_target_pagine: 25
+  elementi_visivi: ["tabelle", "schemi", "grafici"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "article"
+  bibliografia: "biblatex"
+
+cover_defaults:
+  autore: "Dominik Duda"
+  ente: "Mindsmart"
+
+pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+
+post_actions:
+  - bundle
+  - executive-summary

@@ -1,0 +1,22 @@
+profile_name: "Paper di ricerca — IT"
+description: "Paper formato IMRaD per rivista/conferenza italiana. LaTeX article, biblatex, online research mandatorio, 15-30 pp."
+
+answers:
+  tipologia: "ricerca"
+  lingua: "italiano"
+  stile: "formale accademico"
+  destinatario: "rivista / conferenza"
+  lunghezza_target_pagine: 20
+  elementi_visivi: ["tabelle", "grafici"]
+  formato: "latex"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "article"
+  bibliografia: "biblatex"
+
+cover_defaults:
+  autore: "Dominik Duda"
+
+post_actions:
+  - bundle
+  - executive-summary

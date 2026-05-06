@@ -1,0 +1,104 @@
+% =====================================================================
+% Alma Mater Studiorum Università di Bologna — Tesi triennale/magistrale/dottorato
+% Layout conforme alle indicazioni UNIBO (verifica con segreteria del corso)
+% =====================================================================
+\documentclass[12pt,a4paper,twoside,openright]{report}
+
+\usepackage[italian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{a4paper, top=3cm, bottom=3cm, inner=3.5cm, outer=2.5cm, bindingoffset=0.5cm}
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{references.bib}
+
+\begin{document}
+
+% ==================== FRONTESPIZIO UNIBO ====================
+\begin{titlepage}
+\centering
+\vspace*{0.5cm}
+
+{\Large \textsc{Alma Mater Studiorum}}\\
+{\large \textsc{Università di Bologna}}\\[0.5cm]
+
+\includegraphics[width=3cm]{logo-unibo.png}\\[0.5cm]
+
+{\normalsize Scuola di [Scienze]}\\[0.2cm]
+{\normalsize Dipartimento di [Informatica - Scienza e Ingegneria]}\\[0.2cm]
+{\normalsize Corso di Laurea [Magistrale] in [Informatica]}\\[2.5cm]
+
+{\large \textsc{Tesi di Laurea}}\\
+{\normalsize in [Nome dell'esame]}\\[1cm]
+
+{\LARGE \textbf{[Titolo della tesi]}}\\[3cm]
+
+\begin{minipage}{0.45\textwidth}
+\begin{flushleft}
+\textbf{Relatore:}\\
+\textsc{[Chiar.mo Prof. Nome Cognome]}\\[0.4cm]
+\textbf{Correlatore:}\\
+\textsc{[Dott. Nome Cognome]}
+\end{flushleft}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\begin{flushright}
+\textbf{Presentata da:}\\
+\textsc{[Nome Cognome]}\\[0.4cm]
+\textbf{Matricola:}\\
+[1234567]
+\end{flushright}
+\end{minipage}
+
+\vfill
+{\normalsize Sessione [I/II/III]}\\
+{\large Anno Accademico [2025/2026]}
+\end{titlepage}
+
+\thispagestyle{empty}\cleardoublepage
+
+% ==================== DEDICA ====================
+\thispagestyle{empty}
+\vspace*{8cm}
+\hfill\textit{[Dedica opzionale]}
+\cleardoublepage
+
+% ==================== ABSTRACT ====================
+\chapter*{Sommario}
+\addcontentsline{toc}{chapter}{Sommario}
+[Abstract italiano]
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+[Abstract inglese opzionale]
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\chapter{Introduzione}
+[Contenuto...]
+
+\chapter{Stato dell'arte}
+[Contenuto...]
+
+\chapter{Metodologia}
+[Contenuto...]
+
+\chapter{Implementazione}
+[Contenuto...]
+
+\chapter{Risultati}
+[Contenuto...]
+
+\chapter{Conclusioni}
+[Contenuto...]
+
+\printbibliography[heading=bibintoc, title={Bibliografia}]
+
+\appendix
+\chapter{[Appendice]}
+
+\end{document}

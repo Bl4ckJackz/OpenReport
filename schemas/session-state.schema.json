@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "relazione/session-state",
+  "title": "Relazione Session State",
+  "description": "Stato persistente di una sessione /relazione. Validato a load e save.",
+  "type": "object",
+  "required": ["status", "skill_version", "created_at", "last_updated_at", "current_step", "answers", "output_folder"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["in-progress", "ready-for-approval", "approved", "completed", "rejected", "abandoned"],
+      "description": "Stato corrente della sessione. State machine: in-progress → ready-for-approval → approved → completed. Solo /relazione-approve può promuovere ready-for-approval → approved. completed è auto-impostato da Step 10 dopo approved. rejected torna a in-progress. Le transizioni proibite generano errore INVALID_STATE_TRANSITION."
+    },
+    "skill_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Versione della skill che ha creato lo state. Permette migrazione future."
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "last_updated_at": {"type": "string", "format": "date-time"},
+    "current_step": {
+      "type": "string",
+      "enum": [
+        "step-0-resume-check",
+        "step-1-questions",
+        "step-2-scan",
+        "step-2-parallel",
+        "step-2.5-persist",
+        "step-3-template",
+        "step-3.5-research",
+        "step-3.9-checkpoint",
+        "step-4-draft",
+        "step-4-ready",
+        "step-4.5-self-check",
+        "step-5-followup",
+        "step-6-write-output",
+        "step-6.5-pii-secret-check",
+        "step-7-export",
+        "step-8-companion-artifacts",
+        "step-6.7-layout-coherence",
+        "step-9-approval",
+        "step-10-delivered"
+      ]
+    },
+    "answers": {
+      "type": "object",
+      "required": ["tipologia", "lingua", "stile", "destinatario", "lunghezza_target_pagine", "elementi_visivi", "formato", "mock", "ricerca_online", "scan_mode"],
+      "properties": {
+        "tipologia": {
+          "type": "string",
+          "enum": [
+            "tecnica", "laboratorio", "stage", "progetto", "codice", "analisi-codice",
+            "bug", "finale", "tesi", "ricerca", "esperienza", "custom",
+            "proposta", "rfp-response", "sow", "business-case",
+            "spec-funzionale", "spec-tecnica", "incident-postmortem", "status-report",
+            "whitepaper", "case-study", "handover", "runbook",
+            "audit-report", "compliance-report"
+          ]
+        },
+        "lingua": {
+          "type": "string",
+          "enum": [
+            "italiano", "inglese", "italiano+inglese",
+            "spagnolo", "francese", "tedesco", "portoghese"
+          ],
+          "description": "'italiano+inglese' attiva multi-lingua parallelo. es/fr/de/pt attivano forbidden-check con pattern dedicati e locale-format.py."
+        },
+        "stile": {"type": "string"},
+        "destinatario": {"type": "string"},
+        "lunghezza_target_pagine": {"type": "integer", "minimum": 1, "maximum": 500},
+        "elementi_visivi": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["tabelle", "schemi", "grafici", "raci", "rtm", "risk-register", "gantt", "stakeholder-map", "kpi", "nessuno"]}
+        },
+        "formato": {"type": "string", "enum": ["md", "latex", "both"]},
+        "mock": {"type": "string", "enum": ["si-mock", "no-placeholder"]},
+        "ricerca_online": {"type": "string", "enum": ["online", "solo-locale"]},
+        "scan_mode": {
+          "type": "string",
+          "enum": ["rapido", "profondo-parallelo"],
+          "description": "Step 2 mode. 'rapido' = single-pass (default < 15 files). 'profondo-parallelo' = 4 subagents + hybrid store. Auto-suggest > 15 files."
+        },
+        "code_snippets": {
+          "type": "string",
+          "enum": ["no", "si-mirato", "si-estensivo", "solo-appendice"],
+          "default": "no",
+          "description": "Step 1 Q11 (conditional). Controlla se/quanti snippet di codice estrarre dai sorgenti cwd e includere nel draft. Domanda chiesta solo se Glob source-code in cwd ritorna >=5 file. Default per tipologia: tecnica/codice/analisi-codice/bug/spec-tecnica/runbook/incident-postmortem -> si-estensivo; progetto/tesi/ricerca/stage/finale/whitepaper/case-study/handover -> si-mirato; esperienza/laboratorio/status-report -> solo-appendice; altre -> no."
+        },
+        "pdf_style": {
+          "type": "string",
+          "enum": ["accademico", "moderno", "brand"],
+          "description": "Step 7 PDF style. Default in base a tipologia."
+        },
+        "classe_latex": {"type": "string", "enum": ["article", "report", "book", ""]},
+        "bibliografia": {"type": "string", "enum": ["bibtex", "biblatex", "nessuna", ""]},
+        "template": {"type": "string"},
+        "preset": {"type": ["string", "null"], "description": "Nome preset usato (vedi presets/)"},
+        "quick_mode": {"type": "boolean", "default": false},
+        "draft_only": {"type": "boolean", "default": false},
+        "brand_profile": {"type": ["string", "null"], "description": "Nome brand profile (es. 'mindsmart'). null=nessun brand."},
+        "use_user_profile": {"type": "boolean", "default": true, "description": "Se true carica ~/.claude/skills/relazione/.user-profile.json come seed stilistico."},
+        "scadenza": {"type": ["string", "null"], "format": "date", "description": "Data consegna, usata per piano a ritroso."}
+      }
+    },
+    "cover": {
+      "type": "object",
+      "properties": {
+        "autore": {"type": "string"},
+        "titolo": {"type": "string"},
+        "sottotitolo": {"type": "string"},
+        "data": {"type": "string"},
+        "versione": {"type": "string", "description": "SemVer: 0.1 draft, 1.0 approved, 1.1 revisione minore."},
+        "ente": {"type": "string"},
+        "logo_path": {"type": "string"},
+        "doc_id": {"type": "string", "description": "Identificativo univoco, es. PRJ-2026-042."},
+        "protocollo": {"type": "string", "description": "Numero protocollo aziendale."},
+        "classificazione": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted"],
+          "description": "Livello di riservatezza. Appare in header/footer e watermark."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "in-review", "approved", "archived"],
+          "default": "draft",
+          "description": "Ciclo approvazione. Determina banner/watermark."
+        },
+        "stakeholders": {
+          "type": "array",
+          "items": {"type": "object", "properties": {"nome": {"type": "string"}, "ruolo": {"type": "string"}, "organizzazione": {"type": "string"}}}
+        },
+        "approvers": {
+          "type": "array",
+          "items": {"type": "object", "properties": {"nome": {"type": "string"}, "ruolo": {"type": "string"}, "firma_placeholder": {"type": "boolean"}}}
+        },
+        "reviewers": {
+          "type": "array",
+          "items": {"type": "object", "properties": {"nome": {"type": "string"}, "ruolo": {"type": "string"}}}
+        },
+        "contratto_id": {"type": "string"},
+        "progetto_codice": {"type": "string"},
+        "cliente": {"type": "string"}
+      }
+    },
+    "output_folder": {"type": "string"},
+    "files_written": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "deps_installed": {
+      "type": "object",
+      "additionalProperties": {"type": "boolean"}
+    },
+    "token_budget": {
+      "type": "object",
+      "properties": {
+        "estimated_tokens": {"type": "integer"},
+        "actual_tokens_used": {"type": "integer"},
+        "warned_at_threshold": {"type": "boolean"}
+      }
+    },
+    "backups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {"type": "string", "format": "date-time"},
+          "path": {"type": "string"},
+          "step": {"type": "string"}
+        }
+      }
+    },
+    "voice_profile": {
+      "type": "object",
+      "description": "Locked stylistic markers from first section. Reapplied to maintain consistency.",
+      "properties": {
+        "avg_sentence_length": {"type": "number"},
+        "person": {"type": "string", "enum": ["prima-singolare", "prima-plurale", "impersonale", "terza"]},
+        "tense_dominant": {"type": "string"},
+        "lexical_markers": {"type": "array", "items": {"type": "string"}},
+        "subordinate_density": {"type": "number"}
+      }
+    },
+    "mock_inventory": {
+      "type": "array",
+      "description": "Tutti i [MOCK] inseriti, listati nella Nota metodologica finale.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {"type": "string"},
+          "context": {"type": "string"},
+          "section": {"type": "string"}
+        }
+      }
+    },
+    "self_check_results": {
+      "type": "object",
+      "properties": {
+        "word_count_actual": {"type": "integer"},
+        "word_count_target": {"type": "integer"},
+        "forbidden_terms_found": {"type": "array", "items": {"type": "string"}},
+        "ai_tells_found": {"type": "array", "items": {"type": "string"}},
+        "missing_citations": {"type": "array", "items": {"type": "string"}},
+        "missing_images": {"type": "array", "items": {"type": "string"}},
+        "readability_score": {"type": "number"},
+        "tone_drift_warnings": {"type": "array", "items": {"type": "string"}},
+        "fact_check_issues": {"type": "array", "items": {"type": "string"}},
+        "cross_ref_broken": {"type": "array", "items": {"type": "string"}},
+        "temporal_conflicts": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "variables": {
+      "type": "object",
+      "description": "Placeholder aziendali risolti via scripts/resolve-variables.py. Es. {{client_name}}, {{project_code}}, {{delivery_date}}.",
+      "additionalProperties": {"type": ["string", "number", "boolean"]}
+    },
+    "refinement_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "at": {"type": "string", "format": "date-time"},
+          "action": {"type": "string"},
+          "section": {"type": "string"},
+          "summary": {"type": "string"}
+        }
+      }
+    },
+    "audit_trail_ref": {
+      "type": "string",
+      "description": "Path relativo a .session/audit-trail.jsonl se approval workflow attivo."
+    },
+    "approved_at": {"type": "string", "format": "date-time", "description": "Timestamp di /relazione-approve."},
+    "approved_by": {"type": "string", "description": "Nome dell'approver primario."},
+    "final_version": {"type": "string", "description": "Versione approvata (es. 1.0). Riprodotta in cover.versione."},
+    "rejected_reason": {"type": "string", "description": "Motivo del reject in /relazione-approve --reject."},
+    "completed_at": {"type": "string", "format": "date-time", "description": "Timestamp di Step 10 (delivered) — auto-impostato dopo approved."},
+    "knowledge_graph_ref": {
+      "type": "string",
+      "description": "Path relativo a .session/knowledge/. Vedi steps/knowledge-graph.md."
+    },
+    "knowledge_graph_built_at": {"type": "string", "format": "date-time"},
+    "knowledge_graph_nodes": {"type": "integer", "minimum": 0},
+    "layout_check": {
+      "type": "object",
+      "description": "Risultato Step 6.7 layout-coherence. force_overridden: true blocca /relazione-approve.",
+      "properties": {
+        "executed_at": {"type": "string", "format": "date-time"},
+        "style": {"type": "string"},
+        "fail_count": {"type": "integer", "minimum": 0},
+        "warn_count": {"type": "integer", "minimum": 0},
+        "auto_fix_applied": {"type": "boolean"},
+        "force_overridden": {"type": "boolean"}
+      }
+    },
+    "progress": {
+      "type": "object",
+      "description": "Progress tracker visualizzato in refinement.",
+      "properties": {
+        "pages_estimated": {"type": "number"},
+        "pages_target": {"type": "number"},
+        "placeholders_remaining": {"type": "integer"},
+        "mock_remaining": {"type": "integer"},
+        "last_autosave_at": {"type": "string", "format": "date-time"},
+        "last_preview_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "research_cache_ref": {
+      "type": "string",
+      "description": "Path relativo a .session/research-cache/ index.json."
+    },
+    "integrations": {
+      "type": "object",
+      "description": "Metadata integrazioni esterne attive per questa sessione.",
+      "properties": {
+        "jira_project": {"type": "string"},
+        "linear_team": {"type": "string"},
+        "git_repo": {"type": "string"},
+        "confluence_space": {"type": "string"},
+        "notion_db": {"type": "string"},
+        "slack_channel": {"type": "string"}
+      }
+    },
+    "recurring": {
+      "type": "object",
+      "description": "Se questa sessione è un report ricorrente (/relazione-ricorrente).",
+      "properties": {
+        "nome": {"type": "string"},
+        "cadenza": {"type": "string", "enum": ["daily", "weekly", "biweekly", "monthly", "quarterly"]},
+        "periodo": {"type": "string", "description": "Es. '2026-W16' o '2026-04'."},
+        "precedente_ref": {"type": "string", "description": "Path al report precedente per diff."}
+      }
+    },
+    "lang_parallel": {
+      "type": "object",
+      "description": "Se multi-lingua parallelo attivo.",
+      "properties": {
+        "primary": {"type": "string", "enum": ["italiano", "inglese"]},
+        "secondary": {"type": "string", "enum": ["italiano", "inglese"]},
+        "glossary_ref": {"type": "string"}
+      }
+    }
+  }
+}

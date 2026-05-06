@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "relazione/scan-tree",
+  "title": "Relazione Scan Tree (hybrid store)",
+  "description": "Struttura normalizzata prodotta da Step 2-parallel. Entities.jsonl è source of truth; indexes e graph sono derivati e rigenerabili. Loss-preserving via provenance[].",
+  "type": "object",
+  "required": ["version", "meta", "entities_file", "indexes", "graph_file"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Schema version. Bump su breaking change."
+    },
+    "meta": {
+      "type": "object",
+      "required": ["files_scanned", "entities_count", "timestamp", "scan_mode", "round_trip_ok"],
+      "properties": {
+        "files_scanned": {"type": "integer", "minimum": 0},
+        "entities_count": {"type": "integer", "minimum": 0},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "scan_mode": {"type": "string", "enum": ["rapido", "profondo-parallelo"]},
+        "round_trip_ok": {"type": "boolean"},
+        "tokens_main": {"type": "integer"},
+        "tokens_subagents": {"type": "integer"},
+        "confidence_avg": {"type": "number", "minimum": 0, "maximum": 1},
+        "low_confidence_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "entities_file": {
+      "type": "string",
+      "description": "Path (relative a .session/scan/) a entities.jsonl"
+    },
+    "indexes": {
+      "type": "object",
+      "required": ["by_facet", "by_file", "by_section", "by_date"],
+      "properties": {
+        "by_facet":   {"type": "string", "description": "Path a index/by-facet.json"},
+        "by_file":    {"type": "string"},
+        "by_section": {"type": "string"},
+        "by_date":    {"type": "string"}
+      }
+    },
+    "graph_file": {"type": "string"},
+    "merge_candidates_file": {
+      "type": "string",
+      "description": "Entità con match fuzzy non risolte automaticamente. Vuoto se nessuna."
+    }
+  },
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "description": "Un record di entities.jsonl",
+      "required": ["id", "facet", "type", "confidence", "provenance"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(narrative|entities|temporal|assets):[a-z0-9_-]+(:[a-z0-9_-]+)?$",
+          "description": "Stable ID: <facet>:<slug>. Immutabile dopo prima scrittura."
+        },
+        "facet": {
+          "type": "string",
+          "enum": ["narrative", "entities", "temporal", "assets"]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "topic", "glossary_term", "tech", "excerpt",
+            "person", "email", "org", "url",
+            "event", "task", "milestone",
+            "image", "table", "code_block", "schema", "figure"
+          ]
+        },
+        "name": {"type": "string", "description": "Label canonicalizzata (normalized)."},
+        "attrs": {
+          "type": "object",
+          "description": "Attributi specifici del tipo. extras{} preserva campi non schematizzati.",
+          "additionalProperties": true
+        },
+        "mentions": {
+          "type": "array",
+          "description": "Occorrenze nell'input. Mai cancellate in merge.",
+          "items": {
+            "type": "object",
+            "required": ["file", "raw_string"],
+            "properties": {
+              "file": {"type": "string"},
+              "line_start": {"type": "integer"},
+              "line_end": {"type": "integer"},
+              "raw_string": {"type": "string", "description": "Testo originale prima di normalizzazione."},
+              "context": {"type": "string", "description": "±50 caratteri attorno."}
+            }
+          }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Agreement score. Single-source capped a 0.75. Multi-source: 1 - Π(1-ci)."
+        },
+        "provenance": {
+          "type": "array",
+          "description": "Da quali agenti viene. Mai cancellare.",
+          "items": {
+            "type": "object",
+            "required": ["agent", "timestamp"],
+            "properties": {
+              "agent": {"type": "string", "enum": ["narrative", "entities", "temporal", "assets"]},
+              "agent_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+              "timestamp": {"type": "string", "format": "date-time"},
+              "raw_output_excerpt": {"type": "string"}
+            }
+          }
+        },
+        "section_hint": {"type": "string"},
+        "section_hint_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "flags": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["da-verificare", "merge-candidate", "low-confidence", "duplicate-risk"]}
+        },
+        "extras": {
+          "type": "object",
+          "description": "Campi non previsti dallo schema. Preservati, non droppati.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "graph_edge": {
+      "type": "object",
+      "required": ["from_id", "to_id", "rel"],
+      "properties": {
+        "from_id": {"type": "string"},
+        "to_id": {"type": "string"},
+        "rel": {
+          "type": "string",
+          "enum": [
+            "mentions", "authored_by", "owned_by", "occurred_on", "depends_on",
+            "uses", "shown_in", "belongs_to", "references", "reviewed_by"
+          ]
+        },
+        "weight": {"type": "number", "minimum": 0, "maximum": 1, "default": 1}
+      }
+    }
+  }
+}

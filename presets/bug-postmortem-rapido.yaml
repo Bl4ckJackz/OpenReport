@@ -1,0 +1,19 @@
+profile_name: "Bug post-mortem rapido"
+description: "Incident report compatto 3-7 pp, fattuale, blameless. Solo locale (l'incidente è tuo, non si cita letteratura)."
+
+answers:
+  tipologia: "bug"
+  lingua: "italiano"
+  stile: "fattuale"
+  destinatario: "team interno"
+  lunghezza_target_pagine: 5
+  elementi_visivi: ["tabelle"]
+  formato: "md"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+
+cover_defaults:
+  autore: "Dominik Duda"
+
+post_actions:
+  - bundle

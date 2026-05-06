@@ -1,0 +1,25 @@
+profile_name: "Runbook operativo / Playbook"
+description: "Procedure operative numerate per task ricorrenti con rollback, troubleshooting, escalation."
+
+answers:
+  tipologia: "runbook"
+  lingua: "italiano"
+  stile: "imperativo diretto"
+  destinatario: "team interno"
+  lunghezza_target_pagine: 15
+  elementi_visivi: ["tabelle", "schemi"]
+  formato: "md"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+  classe_latex: ""
+  bibliografia: "nessuna"
+  pdf_style: "moderno"
+
+cover_defaults:
+  classificazione: "internal"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-relazione.yaml"
+
+post_actions:
+  - bundle

@@ -1,0 +1,26 @@
+profile_name: "Case Study cliente"
+description: "Storia di successo cliente con challenge/solution/results per marketing e sales."
+
+answers:
+  tipologia: "case-study"
+  lingua: "italiano"
+  stile: "storytelling concreto"
+  destinatario: "pubblico generico / prospect"
+  lunghezza_target_pagine: 6
+  elementi_visivi: ["tabelle", "grafici", "kpi"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+  classe_latex: "article"
+  bibliografia: "nessuna"
+  pdf_style: "brand"
+  brand_profile: "mindsmart"
+
+cover_defaults:
+  classificazione: "public"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+
+post_actions:
+  - bundle

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "relazione/user-profile",
+  "title": "Relazione User Profile",
+  "description": "Profilo stilistico persistente dell'utente. Caricato all'avvio per seed voice.",
+  "type": "object",
+  "properties": {
+    "nome_completo": {"type": "string"},
+    "email": {"type": "string", "format": "email"},
+    "ruolo_default": {"type": "string", "description": "Es. 'studente magistrale', 'founder', 'consulente'."},
+    "ente_default": {"type": "string", "description": "Università o azienda di riferimento."},
+    "lingua_preferita": {"type": "string", "enum": ["italiano", "inglese"], "default": "italiano"},
+    "stile_preferito": {
+      "type": "string",
+      "description": "Registro abituale: 'formale-accademico', 'semi-formale-aziendale', 'tecnico-divulgativo', 'narrativo-personale'."
+    },
+    "voice_profile": {
+      "type": "object",
+      "description": "Marker stilistici distillati da relazioni passate.",
+      "properties": {
+        "avg_sentence_length": {"type": "number"},
+        "person": {"type": "string", "enum": ["prima-singolare", "prima-plurale", "impersonale", "terza"]},
+        "tense_dominant": {"type": "string"},
+        "lexical_markers": {"type": "array", "items": {"type": "string"}},
+        "subordinate_density": {"type": "number"},
+        "formulazioni_tipiche": {"type": "array", "items": {"type": "string"}, "description": "Aperture di sezione, chiusure, transizioni preferite."}
+      }
+    },
+    "preferenze_output": {
+      "type": "object",
+      "properties": {
+        "formato_default": {"type": "string", "enum": ["md", "latex", "both"]},
+        "pdf_style_default": {"type": "string", "enum": ["accademico", "moderno", "brand"]},
+        "include_executive_summary": {"type": "boolean", "default": false},
+        "include_slide_deck": {"type": "boolean", "default": false}
+      }
+    },
+    "relazioni_precedenti": {
+      "type": "array",
+      "description": "Path di relazioni completate usate per inferire lo stile. Max 10, FIFO.",
+      "items": {"type": "string"},
+      "maxItems": 10
+    },
+    "banned_words": {
+      "type": "array",
+      "description": "Parole che l'utente non vuole mai vedere nei suoi doc. Estensione forbidden-terms.",
+      "items": {"type": "string"}
+    },
+    "preferred_terms": {
+      "type": "object",
+      "description": "Sostituzioni automatiche. Es. {'customer': 'cliente', 'stakeholder': 'interessato'}.",
+      "additionalProperties": {"type": "string"}
+    },
+    "updated_at": {"type": "string", "format": "date-time"},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

@@ -1,0 +1,39 @@
+% Frontespizio Tesi — Università degli Studi di Milano (Statale)
+% Richiede: xcolor, graphicx, fontspec
+
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+  \includegraphics[width=0.32\textwidth]{logo-unimi}\\[0.5cm]
+  {\scshape\LARGE Università degli Studi di Milano\par}
+  \vspace{0.3cm}
+  {\large Facoltà di \variable{facolta}\par}
+  \vspace{0.2cm}
+  {\large Dipartimento di \variable{dipartimento}\par}
+  \vspace{0.2cm}
+  {\large Corso di Laurea \variable{livello} in \variable{corso_di_laurea}\par}
+  \vspace{1.8cm}
+  \rule{\textwidth}{0.4pt}\\[0.5cm]
+  {\huge\bfseries \variable{titolo_tesi}\par}
+  \vspace{0.4cm}
+  \rule{\textwidth}{0.4pt}\\[1.5cm]
+  \begin{minipage}{0.48\textwidth}
+    \begin{flushleft}\large
+      \emph{Relatore:}\\
+      Prof. \variable{relatore}\\[0.3cm]
+      \ifx\variable{correlatore}\empty\else
+      \emph{Correlatore:}\\
+      Prof. \variable{correlatore}
+      \fi
+    \end{flushleft}
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \begin{flushright}\large
+      \emph{Tesi di Laurea di:}\\
+      \variable{autore}\\
+      Matricola: \variable{matricola}
+    \end{flushright}
+  \end{minipage}
+  \vfill
+  {\large Anno Accademico \variable{anno_accademico}\par}
+\end{titlepage}

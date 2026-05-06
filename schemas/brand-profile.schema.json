@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "relazione/brand-profile",
+  "title": "Relazione Brand Profile",
+  "description": "Profilo brand aziendale per document control e styling. Uno o più brand in un array brands[].",
+  "type": "object",
+  "properties": {
+    "brands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["nome", "ragione_sociale"],
+        "properties": {
+          "nome": {"type": "string", "description": "Chiave breve, es. 'mindsmart'."},
+          "ragione_sociale": {"type": "string", "description": "Nome legale, es. 'Mindsmart S.r.l.'."},
+          "claim": {"type": "string"},
+          "indirizzo": {"type": "string"},
+          "p_iva": {"type": "string"},
+          "codice_fiscale": {"type": "string"},
+          "sdi": {"type": "string"},
+          "pec": {"type": "string"},
+          "sito_web": {"type": "string"},
+          "email_default": {"type": "string", "format": "email"},
+          "telefono": {"type": "string"},
+          "logo_path": {"type": "string", "description": "Path assoluto o ~/ al file logo."},
+          "logo_path_light": {"type": "string", "description": "Variante per sfondi scuri (opzionale)."},
+          "palette": {
+            "type": "object",
+            "properties": {
+              "primary": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+              "secondary": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+              "accent": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+              "text": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+              "background": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"}
+            }
+          },
+          "font": {
+            "type": "object",
+            "properties": {
+              "body": {"type": "string", "description": "Es. 'Inter', 'Source Sans Pro', 'EB Garamond'."},
+              "heading": {"type": "string"},
+              "mono": {"type": "string"}
+            }
+          },
+          "glossario": {
+            "type": "object",
+            "description": "Mappa termini aziendali. Chiave=generico, valore=aziendale.",
+            "additionalProperties": {"type": "string"}
+          },
+          "banned_words": {
+            "type": "array",
+            "description": "Parole da evitare (tono, legal, compliance). Estesi a forbidden-check.sh.",
+            "items": {"type": "string"}
+          },
+          "preferred_terms": {
+            "type": "object",
+            "description": "Sostituzioni automatiche raccomandate.",
+            "additionalProperties": {"type": "string"}
+          },
+          "boilerplate": {
+            "type": "object",
+            "description": "Path a file con frasi riusabili.",
+            "properties": {
+              "company_description": {"type": "string"},
+              "privacy_notice": {"type": "string"},
+              "legal_disclaimer": {"type": "string"},
+              "sla_standard": {"type": "string"},
+              "nda_clauses": {"type": "string"},
+              "payment_terms": {"type": "string"}
+            }
+          },
+          "classification_default": {
+            "type": "string",
+            "enum": ["public", "internal", "confidential", "restricted"],
+            "default": "internal"
+          },
+          "watermark_rules": {
+            "type": "object",
+            "properties": {
+              "draft": {"type": "string", "default": "DRAFT — DO NOT DISTRIBUTE"},
+              "in_review": {"type": "string", "default": "FOR REVIEW"},
+              "confidential": {"type": "string", "default": "CONFIDENTIAL"}
+            }
+          }
+        }
+      }
+    },
+    "active_brand": {
+      "type": "string",
+      "description": "Nome brand attivo di default (chiave in brands[])."
+    },
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}

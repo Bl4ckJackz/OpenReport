@@ -1,0 +1,27 @@
+profile_name: "Proposta commerciale"
+description: "Offerta commerciale cliente con brand, pricing table, validity, executive summary."
+
+answers:
+  tipologia: "proposta"
+  lingua: "italiano"
+  stile: "semi-formale aziendale"
+  destinatario: "azienda / committente"
+  lunghezza_target_pagine: 20
+  elementi_visivi: ["tabelle", "schemi", "gantt"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+  classe_latex: "article"
+  bibliografia: "nessuna"
+  pdf_style: "brand"
+  brand_profile: "mindsmart"
+
+cover_defaults:
+  classificazione: "confidential"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+
+post_actions:
+  - executive-summary
+  - bundle

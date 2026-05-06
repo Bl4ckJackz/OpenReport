@@ -1,0 +1,90 @@
+% =====================================================================
+% Università degli Studi di Napoli Federico II — Tesi triennale/magistrale
+% Layout conforme alle indicazioni Federico II (verifica con segreteria)
+% =====================================================================
+\documentclass[12pt,a4paper,oneside,openright]{report}
+
+\usepackage[italian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{a4paper, top=3cm, bottom=3cm, inner=3.5cm, outer=2.5cm}
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{references.bib}
+
+\begin{document}
+
+% ==================== FRONTESPIZIO FEDERICO II ====================
+\begin{titlepage}
+\centering
+\vspace*{0.5cm}
+
+{\large \textbf{UNIVERSITÀ DEGLI STUDI DI NAPOLI}}\\
+{\large \textbf{FEDERICO II}}\\[0.5cm]
+
+\includegraphics[width=3.5cm]{logo-unina.png}\\[0.5cm]
+
+{\normalsize Scuola Politecnica e delle Scienze di Base}\\[0.2cm]
+{\normalsize Area Didattica di [Scienze Matematiche, Fisiche e Naturali]}\\[0.2cm]
+{\normalsize Corso di Laurea [Magistrale] in [Informatica]}\\[3cm]
+
+{\large \textsc{Tesi di Laurea [Magistrale] in [Disciplina]}}\\[1cm]
+
+{\LARGE \textbf{[Titolo della tesi]}}\\[3cm]
+
+\begin{minipage}{0.45\textwidth}
+\begin{flushleft}
+\textbf{Relatore:}\\
+[Ch.mo Prof. Nome Cognome]\\[0.4cm]
+\textbf{Correlatore:}\\
+[Dott. Nome Cognome]
+\end{flushleft}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\begin{flushright}
+\textbf{Candidato:}\\
+[Nome Cognome]\\
+matr. [N12/345]
+\end{flushright}
+\end{minipage}
+
+\vfill
+{\large Anno Accademico [2025/2026]}
+\end{titlepage}
+
+% ==================== DEDICA / RINGRAZIAMENTI ====================
+\chapter*{Ringraziamenti}
+[Opzionale]
+
+% ==================== ABSTRACT ====================
+\chapter*{Sommario}
+\addcontentsline{toc}{chapter}{Sommario}
+[Abstract italiano]
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\chapter{Introduzione}
+[Contenuto...]
+
+\chapter{Stato dell'arte}
+[Contenuto...]
+
+\chapter{Metodologia}
+[Contenuto...]
+
+\chapter{Risultati sperimentali}
+[Contenuto...]
+
+\chapter{Conclusioni}
+[Contenuto...]
+
+\printbibliography[heading=bibintoc, title={Bibliografia}]
+
+\appendix
+\chapter{[Appendice opzionale]}
+
+\end{document}

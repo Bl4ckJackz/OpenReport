@@ -1,0 +1,25 @@
+profile_name: "Progetto aziendale — both formats"
+description: "Progetto aziendale 30-50 pp con sia md (per editing/Notion) sia pdf (consegna). Stile formale ma non accademico, online research opzionale."
+
+answers:
+  tipologia: "progetto"
+  lingua: "italiano"
+  stile: "semi-formale aziendale"
+  destinatario: "committente / stakeholder"
+  lunghezza_target_pagine: 40
+  elementi_visivi: ["tabelle", "schemi", "grafici"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "online"
+  classe_latex: "article"
+  bibliografia: "biblatex"
+
+cover_defaults:
+  autore: "Dominik Duda"
+
+pdf_template: "../pdf-templates/eisvogel-mindsmart.yaml"
+
+post_actions:
+  - bundle
+  - executive-summary
+  - slides

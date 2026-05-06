@@ -1,0 +1,25 @@
+profile_name: "Specifica Funzionale"
+description: "Specifica funzionale con RF/RNF numerati, user story, acceptance criteria Gherkin, traceability matrix."
+
+answers:
+  tipologia: "spec-funzionale"
+  lingua: "italiano"
+  stile: "tecnico preciso"
+  destinatario: "team interno / committente"
+  lunghezza_target_pagine: 40
+  elementi_visivi: ["tabelle", "schemi", "rtm"]
+  formato: "both"
+  mock: "no-placeholder"
+  ricerca_online: "solo-locale"
+  classe_latex: "report"
+  bibliografia: "nessuna"
+  pdf_style: "moderno"
+
+cover_defaults:
+  classificazione: "internal"
+  status: "draft"
+
+pdf_template: "../pdf-templates/eisvogel-relazione.yaml"
+
+post_actions:
+  - bundle
