@@ -1,6 +1,6 @@
 ---
 name: relazione
-description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente, /relazione-doctor, /relazione-setup, /relazione-estimate, /relazione-help or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
+description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente, /relazione-doctor, /relazione-setup, /relazione-estimate, /relazione-help, /relazione-exit or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
 ---
 
 # Relazione (Report Writer)
@@ -50,13 +50,14 @@ Alla fine di ciascuna di queste fasi, stampa la riga indicata:
 | /relazione-review eseguito | `→ Next: condividi il PDF watermarked. Quando ricevi feedback DOCX: /relazione-import-feedback <file>.docx` |
 | /relazione-approve eseguito | `→ Next: relazione approvata e archiviata. Versione finale in <output>/archive/v<x>/. Sessione completata.` |
 | /relazione-import-feedback | `→ Next: ho applicato N suggerimenti. Lancia /relazione per riaprire e continuare il refinement, poi /relazione-approve.` |
+| /relazione-exit eseguito | `→ Next: per riprendere: /relazione-continua. Per snapshot read-only: /relazione-stats. Per backup precedente: /relazione-rollback.` |
 | Errore tool mancante | `→ Next: lancia /relazione-doctor per diagnosticare.` |
 
 Le righe `→ Next:` devono essere l'**ultima** comunicazione del turno (dopo l'output normale, prima dell'attesa input). Se la fase richiede una `AskUserQuestion`, includi il next come testo nel prompt della domanda, non in un messaggio separato.
 
 ## When to Use
 
-- Comandi: `/relazione`, `/relazione-quick`, `/relazione-continua`, `/relazione-rollback`, `/relazione-stats`, `/relazione-diff`, `/relazione-doctor`, `/relazione-setup`, `/relazione-estimate`, `/relazione-help`
+- Comandi: `/relazione`, `/relazione-quick`, `/relazione-continua`, `/relazione-rollback`, `/relazione-stats`, `/relazione-diff`, `/relazione-doctor`, `/relazione-setup`, `/relazione-estimate`, `/relazione-help`, `/relazione-exit`
 - Richieste in linguaggio naturale: "scrivimi una relazione", "fammi la relazione su…", "prepara un report di…", "write a report about…"
 - Documentare progetto, esperienza, tesi, ricerca, lab, stage, codebase, bug, incidente
 

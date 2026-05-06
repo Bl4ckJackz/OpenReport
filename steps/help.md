@@ -27,6 +27,7 @@ Anytime:
   /relazione-stats       dashboard sessioni
   /relazione-diff        confronta due iterazioni
   /relazione-rollback    ripristina backup
+  /relazione-exit        uscita pulita (save + backup + summary)
   /relazione-help        mostra di nuovo questo riepilogo
 
 Per uso avanzato:

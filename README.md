@@ -45,6 +45,7 @@ Versione corrente: vedi [`VERSION`](./VERSION) — changelog completo in [`CHANG
 | `/relazione-setup` | Wizard al primo utilizzo (brand profile + Eisvogel + doctor) |
 | `/relazione-estimate` | Stima preventiva di token, pressione context-window e tempo prima di iniziare |
 | `/relazione-help` | Mostra il welcome con cosa fa la skill e la sequenza di comandi per usarla al 100% |
+| `/relazione-exit` | Uscita pulita: forza save, crea backup snapshot, stampa summary + comando di resume |
 
 ## Installazione
 

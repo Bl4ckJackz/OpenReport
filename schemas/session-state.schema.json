@@ -241,6 +241,11 @@
     },
     "knowledge_graph_built_at": {"type": "string", "format": "date-time"},
     "knowledge_graph_nodes": {"type": "integer", "minimum": 0},
+    "paused_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp informativo dell'ultimo /relazione-exit. Non blocca il flow; sopravvive a /relazione-continua."
+    },
     "outline": {
       "type": "object",
       "description": "Risultato Step 3.6 outline-first. Vedi steps/step-3.6-outline.md.",

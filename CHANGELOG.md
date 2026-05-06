@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.5.1 — 2026-05-06
+
+Comando di uscita pulita.
+
+### Aggiunte
+
+- **`/relazione-exit`** — simmetrico di `/relazione-continua`. Forza save di `session-state.json`, crea uno snapshot di backup in `.session/backups/{ISO}-pre-exit/`, stampa un summary (sessione, tipologia, step, file scritti, mock residui, ultimo backup) e una riga `→ Next:` con i comandi di ripresa. Idempotente: rieseguirlo è sicuro.
+- **Schema esteso**: campo opzionale `paused_at` (ISO 8601) in `schemas/session-state.schema.json`. Informativo, non blocca il flow; sopravvive a `/relazione-continua`.
+- **Documentazione**: `steps/exit.md` con behavior completo per i 4 casi (sessione attiva / nessuna sessione / sessione completata / errore bloccante) + riga `→ Next:` formale + clausola di idempotenza.
+
+### Modifiche
+
+- `SKILL.md` — frontmatter `description` esteso a `/relazione-exit`. Riga aggiunta alla tabella "Pattern → Next:".
+- `README.md` — nuova riga in tabella Comandi.
+- `steps/help.md` — `/relazione-exit` aggiunto alla sezione "Anytime" del welcome message.
+
+### Test
+
+Il comando non aggiunge script Python, quindi non serve nuovo smoke test. La suite resta a 9/9 passati. Auditing manuale dei riferimenti step e script: pulito.
+
+### Nessuna breaking change
+
+`status` e `current_step` non vengono mai modificati da `/relazione-exit`. La sessione resta `in-progress` o `ready-for-approval` — `paused_at` è puramente informativo.
+
 ## 2.5.0 — 2026-05-06
 
 User communication contract — la skill è autodocumentante.
