@@ -2,3 +2,5 @@
 .user-profile.json
 .session/
 *.err
+__pycache__/
+*.pyc
