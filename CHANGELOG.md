@@ -1,5 +1,24 @@
 # Changelog
 
+## 2.4.0 — 2026-05-06
+
+Stima costi preventiva + workflow outline-first per documenti lunghi.
+
+### Aggiunte
+
+- **`/relazione-estimate`** — stima preventiva di token, costo in €/$ e tempo, prima di partire. Confronta i 3 modelli (Haiku 4.5 / Sonnet 4.6 / Opus 4.7) in modalità sync e batch. Implementazione: `scripts/workflow/estimate.py`. Documentazione: `steps/estimate.md`.
+- **Step 3.6 — Outline-first review** (opzionale, attivo per pages ≥ 30): genera prima la struttura (~2.5k token), la sottoponi all'utente per approvazione, poi Step 4 espande dall'outline approvato. Vantaggi: −30% token output, −40% iterazioni refinement. Documentazione: `steps/step-3.6-outline.md`.
+- **Schema esteso**: `schemas/session-state.schema.json` ha ora il blocco `outline` (`approved`, `version`, `path`, `section_count`, `subsection_count`, `generated_at`, `approved_at`).
+
+### Modifiche
+
+- `SKILL.md` — aggiunto Step 3.6 al flow + `/relazione-estimate` al frontmatter `description` e alla sezione "When to Use".
+- `README.md` — sezioni Stima preventiva e Outline-first.
+
+### Note di migrazione
+
+Nessuna breaking change. Sessioni esistenti restano valide; il nuovo campo `outline` è opzionale nello schema.
+
 ## 2.3.0 — 2026-05-06
 
 Token efficiency pass + performance playbook.

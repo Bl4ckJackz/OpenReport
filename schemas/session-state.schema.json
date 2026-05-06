@@ -241,6 +241,19 @@
     },
     "knowledge_graph_built_at": {"type": "string", "format": "date-time"},
     "knowledge_graph_nodes": {"type": "integer", "minimum": 0},
+    "outline": {
+      "type": "object",
+      "description": "Risultato Step 3.6 outline-first. Vedi steps/step-3.6-outline.md.",
+      "properties": {
+        "approved": {"type": "boolean"},
+        "version": {"type": "integer", "minimum": 1},
+        "path": {"type": "string", "description": "Path relativo all'outline (es. .session/outline.md)."},
+        "section_count": {"type": "integer", "minimum": 0},
+        "subsection_count": {"type": "integer", "minimum": 0},
+        "generated_at": {"type": "string", "format": "date-time"},
+        "approved_at": {"type": "string", "format": "date-time"}
+      }
+    },
     "layout_check": {
       "type": "object",
       "description": "Risultato Step 6.7 layout-coherence. force_overridden: true blocca /relazione-approve.",

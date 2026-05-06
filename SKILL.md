@@ -1,6 +1,6 @@
 ---
 name: relazione
-description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente, /relazione-doctor, /relazione-setup or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
+description: Use when the user invokes /relazione, /relazione-quick, /relazione-continua, /relazione-rollback, /relazione-stats, /relazione-diff, /relazione-brand, /relazione-review, /relazione-approve, /relazione-import-feedback, /relazione-ricorrente, /relazione-doctor, /relazione-setup, /relazione-estimate or asks to write a formal Italian/English report ("relazione") of any tipologia — accademica (tesi/ricerca/stage/laboratorio/progetto/esperienza) o enterprise (proposta/rfp-response/sow/business-case/spec-funzionale/spec-tecnica/incident-postmortem/status-report/whitepaper/case-study/handover/runbook/audit-report/compliance-report). Scans cwd, applies brand/user profile if set, resolves variables, gathers requirements interactively (or via preset), generates draft scaled to target length, refines through follow-up questions, runs self-check (forbidden terms, AI tells, fact-check vs research, cross-ref lint, temporal consistency, citations, readability, tone drift, PII/secrets, accessibility), writes output (md/LaTeX/both), exports docx/pdf/EPUB in parallel with document control sheet + watermark, supports approval workflow with audit trail, multi-language IT+EN parallel, recurring reports, external integrations (Jira/Linear/Confluence/Notion/SharePoint/Slack/Teams/Git), defense simulator for theses. Persists state across context resets.
 ---
 
 # Relazione (Report Writer)
@@ -24,7 +24,7 @@ Skill modulare per generare relazioni formali in Italiano/Inglese a partire dai 
 
 ## When to Use
 
-- Comandi: `/relazione`, `/relazione-quick`, `/relazione-continua`, `/relazione-rollback`, `/relazione-stats`, `/relazione-diff`, `/relazione-doctor`, `/relazione-setup`
+- Comandi: `/relazione`, `/relazione-quick`, `/relazione-continua`, `/relazione-rollback`, `/relazione-stats`, `/relazione-diff`, `/relazione-doctor`, `/relazione-setup`, `/relazione-estimate`
 - Richieste in linguaggio naturale: "scrivimi una relazione", "fammi la relazione su…", "prepara un report di…", "write a report about…"
 - Documentare progetto, esperienza, tesi, ricerca, lab, stage, codebase, bug, incidente
 
@@ -254,6 +254,22 @@ Gate: se `answers.ricerca_online == "solo-locale"`, scrivi nota in `research-not
 Se `online`: WebSearch + WebFetch per stato arte, algoritmi, librerie, standard, bibliografia. Output strutturato in `research-notes.md` (URL, autori, anno, venue, estratto).
 
 **Regola assoluta:** mai inventare URL/DOI/autori/titoli. Cita solo fonti effettivamente recuperate.
+
+## Step 3.6 — Outline-first review (opzionale, attivo per pages >= 30)
+
+**Vedi `steps/step-3.6-outline.md`.**
+
+Genera prima la struttura (indice + 1 frase per sezione, ~2.5k token), la sottoponi all'utente per approvazione/modifica, poi Step 4 espande sezione per sezione partendo dall'outline approvato.
+
+Trigger:
+- `pages >= 30` → proponi attivazione
+- `pages >= 60` → attiva di default (utente può rifiutare)
+- `--outline-first` flag → forza
+- `tipologia == "custom"` → sempre raccomandato
+
+Vantaggi: -30% token output draft, -40% iterazioni Step 5, l'utente co-crea invece di ricevere.
+
+Salva in `session-state.json.outline.{approved, version, path, section_count}`.
 
 ## Step 3.9 — Checkpoint pre-draft (token budget guard)
 

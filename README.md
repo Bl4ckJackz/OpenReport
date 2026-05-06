@@ -43,6 +43,7 @@ Versione corrente: vedi [`VERSION`](./VERSION) — changelog completo in [`CHANG
 | `/relazione-preset-import` | Importa preset da URL (gist/GitHub) |
 | `/relazione-doctor` | Diagnostica ambiente (dipendenze required/recommended/optional) |
 | `/relazione-setup` | Wizard al primo utilizzo (brand profile + Eisvogel + doctor) |
+| `/relazione-estimate` | Stima preventiva di token, costo (€/$), e tempo prima di iniziare |
 
 ## Installazione
 
@@ -70,6 +71,26 @@ Poi scrivi `/relazione` per attivarla.
 ### Copilot CLI / Gemini CLI
 
 Il file `SKILL.md` è compatibile con il formato Anthropic Skills. Per Gemini CLI la skill viene attivata via `activate_skill`. Vedi [`docs/SKILL-GUIDE.md`](./docs/SKILL-GUIDE.md) per i dettagli.
+
+## Stima preventiva
+
+Prima di iniziare una relazione lunga puoi stimare token, costo e tempo:
+
+```bash
+python scripts/workflow/estimate.py --tipologia tesi --pages 80 --online --outline-first
+```
+
+Confronta i 3 modelli (Haiku 4.5 / Sonnet 4.6 / Opus 4.7) in modalità sync e batch, mostrando il risparmio massimo. Stima ±30%. Vedi [`steps/estimate.md`](./steps/estimate.md).
+
+## Outline-first (per documenti ≥ 30 pagine)
+
+Per documenti lunghi, la skill genera **prima** l'indice + 1 frase per sezione (~2.5k token), te lo sottopone, lo approvi/modifichi, e **poi** Step 4 espande sezione per sezione. Vantaggi:
+
+- −30% token sull'output finale (catturi rifusioni strutturali prima di pagare l'espansione)
+- −40% iterazioni di refinement (problemi di scope visti subito)
+- L'utente co-crea invece di ricevere
+
+Trigger automatico per `pages >= 60`, opzionale per 30-60. Vedi [`steps/step-3.6-outline.md`](./steps/step-3.6-outline.md).
 
 ## Diagnostica
 
