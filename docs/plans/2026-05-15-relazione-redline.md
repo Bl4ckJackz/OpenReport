@@ -8,7 +8,14 @@
 
 **Tech Stack:** Python 3 (stdlib `difflib`, `argparse`, `re`, `json`, `pathlib`), pandoc ≥ 2.x (`markdown+critic_markup`, JSON AST filters), LaTeX `changes` package (with `soul` fallback), Typst, bash. Tests with pytest (added by Task 1).
 
-**Spec:** `~/.claude/skills/relazione/docs/specs/2026-05-15-relazione-redline-design.md`
+**Spec:** `docs/specs/2026-05-15-relazione-redline-design.md`
+
+**Repo conventions (read before implementing):**
+- Scripts use `kebab-case.py` filenames — they are CLI entry points, not importable modules. Tests invoke them via `subprocess.run([python, str(script), ...])` (pattern: `tests/test_doctor.py`). Do **not** rename to `snake_case.py` and do **not** add `scripts/` to `sys.path`.
+- Existing `tests/conftest.py` provides `repo_root` and `python` session fixtures. Use them. Do **not** add a second conftest that mutates `sys.path`.
+- Tests in this plan that show `import redline_generator as rg` etc. are simplified — actual implementation must use `subprocess.run` invocations against the CLI and assert on stdout/stderr/output files.
+- Sourced helpers at `scripts/_check-pandoc-critic.sh` and `scripts/_resolve-baseline.sh` are referenced from subdirs as `$(dirname "${BASH_SOURCE[0]}")/../_*.sh`. Verify this works after every script edit.
+- The `redline-generator.py` CLI lives in `scripts/workflow/`. Other-subdir callers (e.g. `scripts/export/parallel-export.sh`) invoke it via `$(dirname "${BASH_SOURCE[0]}")/../workflow/redline-generator.py`.
 
 ---
 
