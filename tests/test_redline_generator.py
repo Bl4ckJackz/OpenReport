@@ -166,6 +166,21 @@ def test_table_row_change_marks_whole_table(tmp_path, repo_root, python):
     assert "Post." in text
 
 
+# --- A7: Escape spurious CriticMarkup markers in source ---
+
+def test_source_braces_escaped_to_avoid_pandoc_interpretation(tmp_path, repo_root, python):
+    baseline = tmp_path / "b.md"
+    current = tmp_path / "c.md"
+    # Both files identical: {++ appears in source and must be escaped in output
+    baseline.write_text("Esempio: usa `{++` come marker.\n", encoding="utf-8")
+    current.write_text("Esempio: usa `{++` come marker.\n", encoding="utf-8")
+    out = tmp_path / "out.md"
+    _run(python, repo_root, baseline, current, out)
+    text = out.read_text(encoding="utf-8")
+    # The source literal {++ must be escaped so pandoc won't interpret it as CriticMarkup
+    assert "\\{++" in text or "\\{ ++" in text
+
+
 def test_escalation_word_to_sentence_when_cap_exceeded(tmp_path, repo_root, python):
     baseline = tmp_path / "b.md"
     current = tmp_path / "c.md"

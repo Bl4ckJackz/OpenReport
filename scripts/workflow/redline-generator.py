@@ -17,6 +17,7 @@ SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
 MAX_SPANS_DEFAULT = 5000
 CODE_FENCE_RE = re.compile(r"^\s*```", re.MULTILINE)
 TABLE_LINE_RE = re.compile(r"^\s*\|.*\|\s*$", re.MULTILINE)
+CRITIC_MARKERS = ("{++", "++}", "{--", "--}", "{~~", "~~}", "~>")
 
 
 def tokenize(text: str) -> list[str]:
@@ -43,6 +44,26 @@ def diff_to_critic(baseline_tokens: list[str], current_tokens: list[str]) -> str
             else:
                 out.append(f"{{--{old}--}}{{++{new}++}}")
     return "".join(out)
+
+
+def _escape_spurious_critic(text: str, span_runs: list[tuple[int, int]]) -> str:
+    """Escape CriticMarkup markers that appear OUTSIDE generated span ranges.
+
+    Markers inside generated spans are legitimate CriticMarkup; markers that
+    came from the source text (e.g. literal ``{++`` in a code span) must be
+    backslash-escaped so pandoc does not misinterpret them.
+    """
+    in_span = bytearray(len(text))  # 0 = outside, 1 = inside generated span
+    for start, end in span_runs:
+        for i in range(start, min(end, len(text))):
+            in_span[i] = 1
+    out_chars = list(text)
+    for marker in CRITIC_MARKERS:
+        for m in re.finditer(re.escape(marker), text):
+            if not in_span[m.start()]:
+                # Prepend backslash to the opening brace or first char of the marker
+                out_chars[m.start()] = "\\" + out_chars[m.start()]
+    return "".join(out_chars)
 
 
 def _is_opaque_block(text: str) -> bool:
@@ -130,6 +151,12 @@ def _generate_once(baseline_path: str, current_path: str, mode: str) -> tuple[st
                 out_parts.append(f"{{++{p}++}}")
     sep = b_seps[0] if b_seps else "\n\n"
     redlined = sep.join(out_parts)
+    # Find all generated CriticMarkup spans and escape any spurious markers
+    # (literal {++, {--, etc.) that appear outside those spans in the source.
+    span_runs: list[tuple[int, int]] = []
+    for m in re.finditer(r"\{(?:\+\+|--|~~).+?(?:\+\+|--|~~)\}", redlined, flags=re.DOTALL):
+        span_runs.append((m.start(), m.end()))
+    redlined = _escape_spurious_critic(redlined, span_runs)
     n_ins = redlined.count("{++")
     n_del = redlined.count("{--")
     n_sub = redlined.count("{~~")
