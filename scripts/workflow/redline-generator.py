@@ -14,6 +14,7 @@ SUBSTITUTION_MAX_TOKENS = 8
 BLOCK_REWRITE_THRESHOLD = 0.7
 PARAGRAPH_SPLIT_RE = re.compile(r"(\n\s*\n)")
 SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
+MAX_SPANS_DEFAULT = 5000
 
 
 def tokenize(text: str) -> list[str]:
@@ -79,7 +80,7 @@ def _diff_paragraph(b_text: str, c_text: str) -> str:
     return diff_to_critic(b_tokens, c_tokens)
 
 
-def generate(baseline_path: str, current_path: str, out_path: str, mode: str = "word") -> dict:
+def _generate_once(baseline_path: str, current_path: str, mode: str) -> tuple[str, dict]:
     baseline = Path(baseline_path).read_text(encoding="utf-8")
     current = Path(current_path).read_text(encoding="utf-8")
     b_parts = PARAGRAPH_SPLIT_RE.split(baseline)
@@ -101,7 +102,9 @@ def generate(baseline_path: str, current_path: str, out_path: str, mode: str = "
                 out_parts.append(f"{{--{p}--}}")
         elif tag == "replace":
             for b_para, c_para in zip(b_paras[i1:i2], c_paras[j1:j2]):
-                if mode == "sentence":
+                if mode == "block":
+                    out_parts.append(f"{{--{b_para}--}}{{++{c_para}++}}")
+                elif mode == "sentence":
                     out_parts.append(_diff_paragraph_sentence(b_para, c_para))
                 else:
                     out_parts.append(_diff_paragraph(b_para, c_para))
@@ -113,11 +116,10 @@ def generate(baseline_path: str, current_path: str, out_path: str, mode: str = "
                 out_parts.append(f"{{++{p}++}}")
     sep = b_seps[0] if b_seps else "\n\n"
     redlined = sep.join(out_parts)
-    Path(out_path).write_text(redlined, encoding="utf-8")
     n_ins = redlined.count("{++")
     n_del = redlined.count("{--")
     n_sub = redlined.count("{~~")
-    return {
+    stats = {
         "baseline_tokens": sum(len(tokenize(p)) for p in b_paras),
         "current_tokens": sum(len(tokenize(p)) for p in c_paras),
         "mode": mode,
@@ -126,6 +128,30 @@ def generate(baseline_path: str, current_path: str, out_path: str, mode: str = "
         "sub_count": n_sub,
         "total_spans": n_ins + n_del + n_sub,
     }
+    return redlined, stats
+
+
+def generate(
+    baseline_path: str,
+    current_path: str,
+    out_path: str,
+    mode: str = "word",
+    max_spans: int = MAX_SPANS_DEFAULT,
+) -> dict:
+    escalation = ["word", "sentence", "block"]
+    if mode not in escalation:
+        raise ValueError(f"invalid mode: {mode}")
+    start_idx = escalation.index(mode)
+    last_redlined = ""
+    last_stats: dict = {}
+    for current_mode in escalation[start_idx:]:
+        redlined, stats = _generate_once(baseline_path, current_path, current_mode)
+        last_redlined = redlined
+        last_stats = stats
+        if stats["total_spans"] <= max_spans:
+            break
+    Path(out_path).write_text(last_redlined, encoding="utf-8")
+    return last_stats
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -133,10 +159,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("baseline")
     ap.add_argument("current")
     ap.add_argument("-o", "--output", required=True)
-    ap.add_argument("--mode", choices=["word", "sentence"], default="word")
+    ap.add_argument("--mode", choices=["word", "sentence", "block"], default="word")
+    ap.add_argument("--max-spans", type=int, default=MAX_SPANS_DEFAULT)
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args(argv)
-    stats = generate(args.baseline, args.current, args.output, mode=args.mode)
+    stats = generate(args.baseline, args.current, args.output, mode=args.mode, max_spans=args.max_spans)
     if args.verbose:
         print(f"[redline] mode={stats['mode']} baseline={stats['baseline_tokens']} current={stats['current_tokens']}", file=sys.stderr)
     return 0
