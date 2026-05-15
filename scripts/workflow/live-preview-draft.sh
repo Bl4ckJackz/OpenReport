@@ -230,6 +230,27 @@ h = re.sub(r"\[MOCK\]", '<span class="preview-mock">[MOCK]</span>', h)
 with open(p, 'w', encoding='utf-8') as f:
     f.write(h)
 POSTPY
+  python3 - <<'POSTBAR' "$HTML" "$WORK_DIR/_diff_baseline.txt"
+import sys, pathlib
+html_p = pathlib.Path(sys.argv[1])
+state_p = pathlib.Path(sys.argv[2])
+current = state_p.read_text().strip() if state_p.exists() else ""
+options = [("", "OFF"), ("backup", "vs backup"), ("approved", "vs approved"), ("imported", "vs imported")]
+opts_html = "".join(
+    f'<option value="{v}" {"selected" if v == current else ""}>{label}</option>'
+    for v, label in options
+)
+bar = (
+    '<div style="position:sticky;top:0;background:#FFF3CD;border-bottom:2px solid #F4A261;'
+    'padding:6px 12px;font-size:.85em;display:flex;justify-content:flex-end;gap:8px;z-index:200">'
+    '<form method="get" style="margin:0">Diff: '
+    f'<select name="diff" onchange="this.form.submit()">{opts_html}</select>'
+    '</form></div>'
+)
+h = html_p.read_text(encoding="utf-8")
+h = h.replace("<body>", "<body>" + bar, 1)
+html_p.write_text(h, encoding="utf-8")
+POSTBAR
   # Inject auto-reload meta
   printf '<meta http-equiv="refresh" content="3">\n' >> "$HTML"
 }
@@ -243,7 +264,43 @@ echo "    Ctrl-C per fermare"
 
 (
   cd "$WORK_DIR" || exit
-  python3 -m http.server "$PORT" --bind 127.0.0.1 >/dev/null 2>&1 &
+  python3 - "$PORT" "$WORK_DIR" "$DRAFT" "$SESSION" "$NAME" <<'PYSRV' >/dev/null 2>&1 &
+import os, sys, urllib.parse
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+
+port = int(sys.argv[1])
+work_dir = sys.argv[2]
+draft = sys.argv[3]
+session = sys.argv[4]
+name = sys.argv[5]
+state_path = os.path.join(work_dir, "_diff_baseline.txt")
+
+if not os.path.exists(state_path):
+    open(state_path, "w").write(os.environ.get("DIFF_BASELINE", ""))
+
+os.chdir(work_dir)
+
+class Handler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        if "diff" in qs:
+            value = qs["diff"][0]
+            with open(state_path, "w") as f:
+                f.write(value)
+            # Trigger render via touch of marker file (main loop watches mtimes)
+            marker = os.path.join(work_dir, "_force_rerender")
+            open(marker, "w").write(value)
+            self.send_response(303)
+            self.send_header("Location", parsed.path)
+            self.end_headers()
+            return
+        return super().do_GET()
+    def log_message(self, format, *args):
+        pass
+
+HTTPServer(("127.0.0.1", port), Handler).serve_forever()
+PYSRV
   SERVER_PID=$!
   trap "kill $SERVER_PID 2>/dev/null; rm -f '$HTML' '$PROCESSED'" EXIT
 
@@ -253,12 +310,26 @@ echo "    Ctrl-C per fermare"
   fi
 
   LAST_MTIME=0
+  LAST_MARKER=0
+  MARKER="$WORK_DIR/_force_rerender"
+  STATE_FILE="$WORK_DIR/_diff_baseline.txt"
   while true; do
     if [ -f "$DRAFT" ]; then
       MTIME=$(stat -c %Y "$DRAFT" 2>/dev/null || stat -f %m "$DRAFT" 2>/dev/null)
-      if [ "$MTIME" != "$LAST_MTIME" ]; then
+      MMTIME=0
+      [ -f "$MARKER" ] && MMTIME=$(stat -c %Y "$MARKER" 2>/dev/null || stat -f %m "$MARKER" 2>/dev/null)
+      if [ "$MTIME" != "$LAST_MTIME" ] || [ "$MMTIME" != "$LAST_MARKER" ]; then
+        if [ -f "$STATE_FILE" ]; then
+          NEW_BASELINE=$(cat "$STATE_FILE")
+          if [ "$NEW_BASELINE" = "off" ] || [ -z "$NEW_BASELINE" ]; then
+            BASELINE_PATH=""
+          else
+            BASELINE_PATH=$(resolve_baseline_path "$SESSION" "$NEW_BASELINE")
+          fi
+        fi
         render >/dev/null 2>&1
         LAST_MTIME="$MTIME"
+        LAST_MARKER="$MMTIME"
         echo "[reload] $(date +%H:%M:%S)"
       fi
     fi
