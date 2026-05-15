@@ -28,25 +28,49 @@ Cambia **`cover.status`** della sessione da `draft` a `in-review`, aggiunge wate
      "reviewers": [...]
    }
    ```
-5. **Rigenera PDF (se esiste) con watermark**:
+5. **Snapshot redline baseline** (nuovo dalla v2.6.0):
+   - Risolvi baseline source in ordine:
+     1. `<session>/archive/` — sottocartella più recente per nome (es. `v1.0-2026-04-12`). Usa `<session>/archive/<latest>/RELAZIONE.md` come baseline.
+     2. Se nessun archive → file più recente in `<session>/.session/backups/`.
+     3. Se nemmeno backup → salta lo snapshot, warn `[redline] nessuna baseline disponibile, redline disattivato`.
+   - Copia la baseline in `<session>/.session/redline/baseline.md` (mkdir -p `.session/redline/`).
+   - Aggiorna `session-state.json`:
+     ```json
+     "redline": {
+       "enabled": true,
+       "baseline": "approved",
+       "baseline_path": ".session/redline/baseline.md",
+       "baseline_ref": "<ISO-8601 della baseline source>",
+       "mode": "word"
+     }
+     ```
+     Imposta `baseline = approved` se sorgente da `archive/`, `backup` se sorgente da `.session/backups/`.
+   - Log audit-trail:
+     ```bash
+     python3 ~/.claude/skills/relazione/scripts/workflow/audit-trail.py log \
+       --state <state.json> --action redline_enabled --by <user> \
+       --note "baseline=<approved|backup>, ref=<ISO>"
+     ```
+6. **Rigenera PDF (se esiste) con watermark**:
    ```bash
    python3 ~/.claude/skills/relazione/scripts/watermark-pdf.py \
      <output_folder>/RELAZIONE.pdf --status in-review
    ```
    Se pypdf/reportlab mancanti, mostra istruzione LaTeX header.
-6. **Audit trail**:
+7. **Audit trail**:
    ```bash
    python3 ~/.claude/skills/relazione/scripts/audit-trail.py log \
      --state <state.json> --action review_requested --by <user> \
      --from-status draft --to-status in-review \
      --note "Reviewers: <elenco nomi>"
    ```
-7. **(Opzionale) notifica**: se brand profile ha `integrations.slack_channel` o email reviewers, proponi `AskUserQuestion`: "Inviare notifica (Slack / email / no)?"
-8. **Output**:
+8. **(Opzionale) notifica**: se brand profile ha `integrations.slack_channel` o email reviewers, proponi `AskUserQuestion`: "Inviare notifica (Slack / email / no)?"
+9. **Output**:
    > Sessione `relazioni-2026-04-17/` in review.
    > Versione: 0.2 · Status: IN REVIEW · Reviewers: M. Rossi (PM), A. Bianchi (Tech Lead)
    > PDF watermarked: relazioni-2026-04-17/RELAZIONE-watermark.pdf
    > Audit trail aggiornato (.session/audit-trail.jsonl)
+   > Redline attivo, baseline: <approved YYYY-MM-DD | backup ISO-timestamp>
 
 ## Red flags
 
