@@ -60,6 +60,20 @@ Cambia `cover.status` a `approved`, rimuove il watermark DRAFT/REVIEW, aggiunge 
    cp <output>/RELAZIONE.{md,tex,pdf,docx} "$ARCHIVE_DIR/"
    cp <output>/references.bib "$ARCHIVE_DIR/" 2>/dev/null
    ```
+7.5. **Disable redline** (nuovo dalla v2.6.0):
+   - Se `session-state.redline.enabled` è `true`:
+     - Sposta `<session>/.session/redline/baseline.md` → `<session>/.session/redline/baselines/<approval-timestamp>.md` (mkdir -p baselines).
+     - Setta in `session-state.json`:
+       ```json
+       "redline": { "enabled": false }
+       ```
+       (lascia gli altri campi per audit storico)
+     - Log audit-trail:
+       ```bash
+       python3 ~/.claude/skills/relazione/scripts/workflow/audit-trail.py log \
+         --state <state.json> --action redline_disabled --by <user> \
+         --note "Approval; baseline archived to baselines/<timestamp>.md"
+       ```
 8. **Audit trail**:
    ```bash
    python3 ~/.claude/skills/relazione/scripts/audit-trail.py log \
