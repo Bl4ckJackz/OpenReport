@@ -76,3 +76,40 @@ def test_typst_filter_emits_ins_del_repl(repo_root, python):
     assert "#ins[inserito]" in typst
     assert "#del[cancellato]" in typst
     assert "#repl[nuovo][vecchio]" in typst
+
+
+def test_critic_preprocess_converts_ins(repo_root, python, tmp_path):
+    src = tmp_path / "in.md"
+    src.write_text("Pre {++inserito++} fine.\n", encoding="utf-8")
+    out = tmp_path / "out.md"
+    subprocess.run(
+        [python, str(repo_root / "scripts" / "_critic-preprocess.py"), str(src), "-o", str(out)],
+        check=True,
+    )
+    assert "[inserito]{.critic-add}" in out.read_text(encoding="utf-8")
+    assert "{++" not in out.read_text(encoding="utf-8")
+
+
+def test_critic_preprocess_converts_del_and_substitution(repo_root, python, tmp_path):
+    src = tmp_path / "in.md"
+    src.write_text("Pre {--cancellato--} {~~vecchio~>nuovo~~} fine.\n", encoding="utf-8")
+    out = tmp_path / "out.md"
+    subprocess.run(
+        [python, str(repo_root / "scripts" / "_critic-preprocess.py"), str(src), "-o", str(out)],
+        check=True,
+    )
+    txt = out.read_text(encoding="utf-8")
+    assert "[cancellato]{.critic-del}" in txt
+    assert "[vecchio]{.critic-del}[nuovo]{.critic-add}" in txt
+
+
+def test_critic_preprocess_restores_escaped(repo_root, python, tmp_path):
+    src = tmp_path / "in.md"
+    src.write_text(r"Esempio: usa \{++ marker.", encoding="utf-8")
+    out = tmp_path / "out.md"
+    subprocess.run(
+        [python, str(repo_root / "scripts" / "_critic-preprocess.py"), str(src), "-o", str(out)],
+        check=True,
+    )
+    assert "{++" in out.read_text(encoding="utf-8")
+    assert "\\{++" not in out.read_text(encoding="utf-8")
