@@ -7,12 +7,12 @@ from pathlib import Path
 FIXTURES_REL = Path("tests/fixtures/redline")
 
 
-def _run(python: str, repo_root: Path, baseline: Path, current: Path, out: Path, mode: str = "word") -> subprocess.CompletedProcess:
+def _run(python: str, repo_root: Path, baseline: Path, current: Path, out: Path, mode: str = "word", max_spans: int | None = None) -> subprocess.CompletedProcess:
     script = repo_root / "scripts" / "workflow" / "redline-generator.py"
-    return subprocess.run(
-        [python, str(script), str(baseline), str(current), "-o", str(out), "--mode", mode],
-        capture_output=True, text=True, check=True, timeout=30,
-    )
+    cmd = [python, str(script), str(baseline), str(current), "-o", str(out), "--mode", mode]
+    if max_spans is not None:
+        cmd.extend(["--max-spans", str(max_spans)])
+    return subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=30)
 
 
 def test_word_insertion_produces_critic_ins(tmp_path, repo_root, python):
@@ -56,3 +56,42 @@ def test_long_replace_stays_as_del_plus_ins(tmp_path, repo_root, python):
     assert "{--" in text
     assert "{++" in text
     assert "{~~" not in text
+
+
+# --- A3: Paragraph-level block rewrite threshold ---
+
+def test_paragraph_70pct_changed_becomes_block_rewrite(tmp_path, repo_root, python):
+    baseline = tmp_path / "b.md"
+    current = tmp_path / "c.md"
+    baseline.write_text(
+        "Alfa beta gamma delta epsilon zeta eta theta iota kappa.\n",
+        encoding="utf-8",
+    )
+    current.write_text(
+        "Uno due tre quattro cinque sei sette otto nove dieci.\n",
+        encoding="utf-8",
+    )
+    out = tmp_path / "out.md"
+    _run(python, repo_root, baseline, current, out)
+    text = out.read_text(encoding="utf-8")
+    # 70%+ changed: entire paragraph is deleted + inserted as a block (exactly one {-- and one {++)
+    assert text.count("{--") == 1
+    assert text.count("{++") == 1
+
+
+def test_paragraph_30pct_changed_keeps_granular_diff(tmp_path, repo_root, python):
+    baseline = tmp_path / "b.md"
+    current = tmp_path / "c.md"
+    baseline.write_text(
+        "Alfa beta gamma delta epsilon zeta eta theta iota kappa.\n",
+        encoding="utf-8",
+    )
+    current.write_text(
+        "Alfa beta gamma delta NUOVO zeta eta theta iota kappa.\n",
+        encoding="utf-8",
+    )
+    out = tmp_path / "out.md"
+    _run(python, repo_root, baseline, current, out)
+    text = out.read_text(encoding="utf-8")
+    # Only ~10% changed: granular diff should mark just the changed word
+    assert "{--epsilon--}" in text or "{~~epsilon~>NUOVO~~}" in text
