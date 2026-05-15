@@ -3,7 +3,28 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
+
+_FALLBACK = os.environ.get("REDLINE_LATEX_FALLBACK") == "soul"
+
+
+def _ins_macro(text: str) -> str:
+    if _FALLBACK:
+        return f"\\uline{{{text}}}"
+    return f"\\added{{{text}}}"
+
+
+def _del_macro(text: str) -> str:
+    if _FALLBACK:
+        return f"\\sout{{{text}}}"
+    return f"\\deleted{{{text}}}"
+
+
+def _repl_macro(new: str, old: str) -> str:
+    if _FALLBACK:
+        return f"\\sout{{{old}}}\\uline{{{new}}}"
+    return f"\\replaced{{{new}}}{{{old}}}"
 
 
 def raw_latex(s: str) -> dict:
@@ -47,7 +68,7 @@ def transform_inlines(inlines: list) -> list:
         ):
             old = _inline_to_text(node["c"][1])
             new = _inline_to_text(inlines[i + 1]["c"][1])
-            out.append(raw_latex(f"\\replaced{{{new}}}{{{old}}}"))
+            out.append(raw_latex(_repl_macro(new, old)))
             i += 2
             continue
         if node.get("t") == "Span":
@@ -55,11 +76,11 @@ def transform_inlines(inlines: list) -> list:
             classes = attrs[1] if len(attrs) >= 2 else []
             text = _inline_to_text(children)
             if "critic-add" in classes or "ins" in classes:
-                out.append(raw_latex(f"\\added{{{text}}}"))
+                out.append(raw_latex(_ins_macro(text)))
                 i += 1
                 continue
             if "critic-del" in classes or "del" in classes:
-                out.append(raw_latex(f"\\deleted{{{text}}}"))
+                out.append(raw_latex(_del_macro(text)))
                 i += 1
                 continue
         if isinstance(node.get("c"), list):
