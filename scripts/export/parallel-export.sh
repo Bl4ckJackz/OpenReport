@@ -4,6 +4,7 @@
 # Usage:
 #   parallel-export.sh <input.md> [--pdf] [--docx] [--epub] [--tex-too]
 #                        [--template <yaml>] [--bib <file>] [--toc]
+#                        [--redline [backup|approved|imported|auto]]
 #
 # Se tutti i flag format sono assenti, assume --pdf --docx.
 # Ritorna 0 se tutti successo, 1 se almeno uno fallisce (riporta quali).
@@ -17,6 +18,8 @@ DO_TEX=0
 TEMPLATE=""
 BIB=""
 EXTRA_ARGS=()
+REDLINE_MODE="off"
+REDLINE_BASELINE="auto"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -27,7 +30,20 @@ while [ $# -gt 0 ]; do
     --template) TEMPLATE="$2"; shift 2 ;;
     --bib) BIB="$2"; shift 2 ;;
     --toc) EXTRA_ARGS+=(--toc); shift ;;
-    -h|--help) echo "Usage: $0 <input.md> [--pdf] [--docx] [--epub] [--tex-too] [--template yaml] [--bib file]"; exit 0 ;;
+    --redline)
+      REDLINE_MODE="on"
+      if [[ "${2:-}" =~ ^(backup|approved|imported|auto)$ ]]; then
+        REDLINE_BASELINE="$2"; shift 2
+      else
+        shift
+      fi
+      ;;
+    --redline=*)
+      REDLINE_MODE="on"
+      REDLINE_BASELINE="${1#--redline=}"
+      shift
+      ;;
+    -h|--help) echo "Usage: $0 <input.md> [--pdf] [--docx] [--epub] [--tex-too] [--template yaml] [--bib file] [--redline [backup|approved|imported|auto]]"; exit 0 ;;
     *) if [ -z "$INPUT" ]; then INPUT="$1"; else EXTRA_ARGS+=("$1"); fi; shift ;;
   esac
 done
@@ -49,7 +65,8 @@ fi
 
 BASE="${INPUT%.md}"
 TMPDIR=$(mktemp -d)
-trap "rm -rf '$TMPDIR'" EXIT
+LATEX_HEADER=""
+trap 'rm -rf "$TMPDIR"; [ -n "$LATEX_HEADER" ] && rm -f "$LATEX_HEADER"' EXIT
 
 PIDS=()
 declare -A JOBS
@@ -69,14 +86,56 @@ run_job() {
 PANDOC_COMMON=(--standalone "${EXTRA_ARGS[@]}")
 [ -n "$BIB" ] && [ -f "$BIB" ] && PANDOC_COMMON+=(--bibliography="$BIB" --citeproc)
 
+# --- Redline prep ---
+PANDOC_INPUT="$INPUT"
+OUT_SUFFIX=""
+PDF_EXTRA=()
+DOCX_EXTRA=()
+
+if [ "$REDLINE_MODE" = "on" ]; then
+  source "$(dirname "${BASH_SOURCE[0]}")/../_check-pandoc-critic.sh"
+  check_pandoc_critic || exit $?
+  SESSION_DIR=$(dirname "$INPUT")
+  source "$(dirname "${BASH_SOURCE[0]}")/../_resolve-baseline.sh"
+  BASELINE=$(resolve_baseline_path "$SESSION_DIR" "$REDLINE_BASELINE")
+  if [ -n "$BASELINE" ] && [ -f "$BASELINE" ]; then
+    REDLINED="$SESSION_DIR/.session/redline/.redlined-$(basename "$INPUT")"
+    REDLINED_BRACKETED="$SESSION_DIR/.session/redline/.redlined-bracketed-$(basename "$INPUT")"
+    mkdir -p "$(dirname "$REDLINED")"
+    python3 "$(dirname "${BASH_SOURCE[0]}")/../workflow/redline-generator.py" "$BASELINE" "$INPUT" -o "$REDLINED" --mode word
+    python3 "$(dirname "${BASH_SOURCE[0]}")/../_critic-preprocess.py" "$REDLINED" -o "$REDLINED_BRACKETED"
+    PANDOC_INPUT="$REDLINED_BRACKETED"
+    OUT_SUFFIX="-redline"
+    # PDF route: LaTeX changes package + critic-to-latex filter
+    LATEX_HEADER=$(mktemp --suffix=.tex 2>/dev/null || mktemp -t relazione-lh.XXXXXX)
+    if kpsewhich changes.sty >/dev/null 2>&1; then
+      cat > "$LATEX_HEADER" <<'TEX'
+\usepackage[markup=underlined,authormarkup=none]{changes}
+TEX
+    else
+      cat > "$LATEX_HEADER" <<'TEX'
+\usepackage{soul}
+\usepackage[normalem]{ulem}
+TEX
+      export REDLINE_LATEX_FALLBACK=soul
+      echo "[redline] LaTeX 'changes' package non disponibile, fallback a soul+ulem" >&2
+    fi
+    PDF_EXTRA=(--filter "$(dirname "${BASH_SOURCE[0]}")/critic-to-latex.py" -H "$LATEX_HEADER")
+    # DOCX route: filter converts critic spans to Underline/Strikeout (w:u/w:strike in OOXML)
+    DOCX_EXTRA=(--filter "$(dirname "${BASH_SOURCE[0]}")/critic-to-docx.py")
+  else
+    echo "[redline] WARN: baseline non trovata, export pulito" >&2
+  fi
+fi
+
 if [ $DO_PDF -eq 1 ]; then
-  PDF_ARGS=(pandoc "$INPUT" -o "${BASE}.pdf" "${PANDOC_COMMON[@]}" --pdf-engine=xelatex)
+  PDF_ARGS=(pandoc "$PANDOC_INPUT" -o "${BASE}${OUT_SUFFIX}.pdf" "${PANDOC_COMMON[@]}" --pdf-engine=xelatex "${PDF_EXTRA[@]}")
   [ -n "$TEMPLATE" ] && [ -f "$TEMPLATE" ] && PDF_ARGS+=(--template="$TEMPLATE")
   run_job "pdf" "${PDF_ARGS[@]}"
 fi
 
 if [ $DO_DOCX -eq 1 ]; then
-  run_job "docx" pandoc "$INPUT" -o "${BASE}.docx" "${PANDOC_COMMON[@]}"
+  run_job "docx" pandoc "$PANDOC_INPUT" -o "${BASE}${OUT_SUFFIX}.docx" "${PANDOC_COMMON[@]}" "${DOCX_EXTRA[@]}"
 fi
 
 if [ $DO_EPUB -eq 1 ]; then
