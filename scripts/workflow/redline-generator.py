@@ -10,6 +10,8 @@ from pathlib import Path
 
 TOKEN_RE = re.compile(r"(\s+|[^\s\w]|\w+)")
 
+SUBSTITUTION_MAX_TOKENS = 8
+
 
 def tokenize(text: str) -> list[str]:
     return [t for t in TOKEN_RE.findall(text) if t]
@@ -28,7 +30,12 @@ def diff_to_critic(baseline_tokens: list[str], current_tokens: list[str]) -> str
         elif tag == "delete":
             out.append(f"{{--{old}--}}")
         elif tag == "replace":
-            out.append(f"{{--{old}--}}{{++{new}++}}")
+            old_token_count = i2 - i1
+            new_token_count = j2 - j1
+            if old_token_count <= SUBSTITUTION_MAX_TOKENS and new_token_count <= SUBSTITUTION_MAX_TOKENS:
+                out.append(f"{{~~{old.strip()}~>{new.strip()}~~}}")
+            else:
+                out.append(f"{{--{old}--}}{{++{new}++}}")
     return "".join(out)
 
 
