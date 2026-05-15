@@ -15,6 +15,7 @@ Stampa la tabella sotto. **Non leggere file, non lanciare comandi**: questo è u
 | `/relazione-continua [--fresh]` | Riprendi sessione in pausa (auto-detect `relazioni*/`) |
 | `/relazione-rollback [--last]` | Ripristina backup pre-modifica |
 | `/relazione-diff [<f1> <f2>]` | Diff tra due iterazioni o tra corrente e ultimo backup |
+| `/relazione-redline` | `~/.claude/commands/relazione-redline.md` | Mostra modifiche vs baseline in live preview + abilita track-changes negli export |
 | `/relazione-stats [--current|--all]` | Dashboard sessioni + verifica dipendenze (pandoc, xelatex, biber, …) |
 
 ## Configurazione
