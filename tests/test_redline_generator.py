@@ -125,6 +125,47 @@ def _run_verbose(python: str, repo_root: Path, baseline: Path, current: Path, ou
     return subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=60)
 
 
+# --- A6: Code fences and tables as opaque blocks ---
+
+def test_code_fence_is_marked_as_whole_block(tmp_path, repo_root, python):
+    baseline = tmp_path / "b.md"
+    current = tmp_path / "c.md"
+    baseline.write_text(
+        "Intro.\n\n```python\nx = 1\ny = 2\n```\n\nOutro.\n",
+        encoding="utf-8",
+    )
+    current.write_text(
+        "Intro.\n\n```python\nx = 1\ny = 99\n```\n\nOutro.\n",
+        encoding="utf-8",
+    )
+    out = tmp_path / "out.md"
+    _run(python, repo_root, baseline, current, out)
+    text = out.read_text(encoding="utf-8")
+    # Intra-fence token diff must not appear; whole block is del+ins
+    assert "{++99++}" not in text
+    assert "{++" in text and "```python" in text
+    assert "Outro." in text
+
+
+def test_table_row_change_marks_whole_table(tmp_path, repo_root, python):
+    baseline = tmp_path / "b.md"
+    current = tmp_path / "c.md"
+    baseline.write_text(
+        "Pre.\n\n| A | B |\n|---|---|\n| 1 | 2 |\n\nPost.\n",
+        encoding="utf-8",
+    )
+    current.write_text(
+        "Pre.\n\n| A | B |\n|---|---|\n| 1 | 9 |\n\nPost.\n",
+        encoding="utf-8",
+    )
+    out = tmp_path / "out.md"
+    _run(python, repo_root, baseline, current, out)
+    text = out.read_text(encoding="utf-8")
+    # Intra-table token diff must not appear; whole table block is del+ins
+    assert "{++9++}" not in text
+    assert "Post." in text
+
+
 def test_escalation_word_to_sentence_when_cap_exceeded(tmp_path, repo_root, python):
     baseline = tmp_path / "b.md"
     current = tmp_path / "c.md"

@@ -15,6 +15,8 @@ BLOCK_REWRITE_THRESHOLD = 0.7
 PARAGRAPH_SPLIT_RE = re.compile(r"(\n\s*\n)")
 SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
 MAX_SPANS_DEFAULT = 5000
+CODE_FENCE_RE = re.compile(r"^\s*```", re.MULTILINE)
+TABLE_LINE_RE = re.compile(r"^\s*\|.*\|\s*$", re.MULTILINE)
 
 
 def tokenize(text: str) -> list[str]:
@@ -43,6 +45,15 @@ def diff_to_critic(baseline_tokens: list[str], current_tokens: list[str]) -> str
     return "".join(out)
 
 
+def _is_opaque_block(text: str) -> bool:
+    if CODE_FENCE_RE.search(text):
+        return True
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    if lines and all(TABLE_LINE_RE.match(ln) for ln in lines):
+        return True
+    return False
+
+
 def _diff_paragraph_sentence(b_text: str, c_text: str) -> str:
     b_sents = SENTENCE_SPLIT_RE.split(b_text)
     c_sents = SENTENCE_SPLIT_RE.split(c_text)
@@ -66,6 +77,9 @@ def _diff_paragraph_sentence(b_text: str, c_text: str) -> str:
 
 
 def _diff_paragraph(b_text: str, c_text: str) -> str:
+    # Opaque blocks (code fences, tables) are always emitted as whole-block del+ins.
+    if _is_opaque_block(b_text) or _is_opaque_block(c_text):
+        return f"{{--{b_text}--}}{{++{c_text}++}}"
     b_tokens = tokenize(b_text)
     c_tokens = tokenize(c_text)
     # Compute change ratio over non-whitespace tokens only, so that shared
