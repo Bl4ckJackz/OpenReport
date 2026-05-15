@@ -1,0 +1,1 @@
+Il prodotto funziona bene.
