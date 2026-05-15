@@ -6,7 +6,7 @@
 # [DA RIEMPIRE] / [MOCK] mentre Step 4 li riempie.
 #
 # Usage:
-#   live-preview-draft.sh <session-folder> [--port 8766] [--no-open]
+#   live-preview-draft.sh <session-folder> [--port 8766] [--no-open] [--diff baseline]
 #
 # Esempio:
 #   bash scripts/live-preview-draft.sh ./relazioni/
@@ -22,12 +22,17 @@ source "$SCRIPT_DIR/_browser-open.sh"
 SESSION=""
 PORT=8766
 DO_OPEN=1
+DIFF_BASELINE=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --port) PORT="$2"; shift 2 ;;
     --no-open) DO_OPEN=0; shift ;;
+    --diff)
+      DIFF_BASELINE="${2:-auto}"
+      shift 2
+      ;;
     -h|--help)
-      echo "Usage: $0 <session-folder> [--port N] [--no-open]"
+      echo "Usage: $0 <session-folder> [--port N] [--no-open] [--diff backup|approved|imported|auto]"
       exit 0 ;;
     *) SESSION="$1"; shift ;;
   esac
@@ -65,6 +70,18 @@ if [ -z "$DRAFT" ]; then
   echo "[ERR] Nessun draft .md trovato in $SESSION" >&2
   echo "      Avvia /relazione prima per generare il draft." >&2
   exit 2
+fi
+
+BASELINE_PATH=""
+source "$SCRIPT_DIR/../_resolve-baseline.sh"
+if [ -n "$DIFF_BASELINE" ]; then
+  source "$SCRIPT_DIR/../_check-pandoc-critic.sh"
+  check_pandoc_critic || exit $?
+  BASELINE_PATH=$(resolve_baseline_path "$SESSION" "$DIFF_BASELINE")
+  if [ -z "$BASELINE_PATH" ] || [ ! -f "$BASELINE_PATH" ]; then
+    echo "[redline] WARN: baseline '$DIFF_BASELINE' non trovata, diff disattivato" >&2
+    DIFF_BASELINE=""
+  fi
 fi
 
 NAME=$(basename "$DRAFT" .md)
@@ -183,11 +200,24 @@ td,th{border:1px solid #ddd;padding:.5em 1em}
 /* Highlight placeholders */
 p:has-text("[DA RIEMPIRE"){background:rgba(230,57,70,.08);padding:8px;border-left:3px solid #E63946}
 .preview-placeholder{background:rgba(230,57,70,.15);color:#E63946;padding:2px 6px;border-radius:3px;font-family:"JetBrains Mono",monospace;font-size:.85em;font-weight:600}
-.preview-mock{background:rgba(244,162,97,.18);color:#c2691a;padding:2px 6px;border-radius:3px;font-family:"JetBrains Mono",monospace;font-size:.85em;font-weight:600}'
+.preview-mock{background:rgba(244,162,97,.18);color:#c2691a;padding:2px 6px;border-radius:3px;font-family:"JetBrains Mono",monospace;font-size:.85em;font-weight:600}
+.critic-add{background:rgba(42,157,143,.12);color:#2A9D8F;text-decoration:underline;text-decoration-thickness:2px}
+.critic-del{background:rgba(230,57,70,.10);color:#E63946;text-decoration:line-through;text-decoration-thickness:2px}
+.redline-banner{position:sticky;top:0;background:#FFF3CD;border-bottom:2px solid #F4A261;padding:6px 12px;font-size:.85em;text-align:center;z-index:99}'
 
 render() {
   python3 "$PREPROCESS_PY" "$DRAFT" "$PROCESSED"
-  pandoc "$PROCESSED" -o "$HTML" --standalone --toc --metadata title="Live: $NAME" \
+  local PANDOC_INPUT="$PROCESSED"
+  if [ -n "$BASELINE_PATH" ]; then
+    local REDLINED="$WORK_DIR/_redlined-$NAME.md"
+    local REDLINED_BRACKETED="$WORK_DIR/_redlined-bracketed-$NAME.md"
+    python3 "$SCRIPT_DIR/redline-generator.py" "$BASELINE_PATH" "$PROCESSED" -o "$REDLINED" --mode word 2>/dev/null || true
+    if [ -f "$REDLINED" ]; then
+      python3 "$SCRIPT_DIR/../_critic-preprocess.py" "$REDLINED" -o "$REDLINED_BRACKETED"
+      PANDOC_INPUT="$REDLINED_BRACKETED"
+    fi
+  fi
+  pandoc "$PANDOC_INPUT" -o "$HTML" --standalone --toc --metadata title="Live: $NAME" \
     --css="data:text/css,$(echo "$EXTRA_CSS" | tr '\n' ' ')" 2>&1 | head -3
   # Post-process HTML: wrappa [DA RIEMPIRE:...] e [MOCK] in span colorati
   python3 - <<'POSTPY' "$HTML"
