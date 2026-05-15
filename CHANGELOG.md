@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.6.0 — 2026-05-15
+
+### Added
+- **Redline (track-changes)** Word-style su 4 formati di export.
+  - Nuovi script: `scripts/workflow/redline-generator.py`, `scripts/export/critic-to-latex.py`, `scripts/export/critic-to-typst.py`, `scripts/export/critic-to-docx.py`, `scripts/_critic-preprocess.py`, `scripts/_check-pandoc-critic.sh`, `scripts/_resolve-baseline.sh`.
+  - Nuovo comando: `/relazione-redline [backup|approved|imported]` per vista on-demand.
+  - Nuovo flag `--redline` su `scripts/workflow/live-preview-draft.sh`, `scripts/export/export-html-standalone.sh`, `scripts/export/export-typst.sh`, `scripts/export/parallel-export.sh`.
+  - Block `redline` in `schemas/session-state.schema.json`.
+  - LaTeX fallback automatico a `soul`+`ulem` se pacchetto `changes` non disponibile (`REDLINE_LATEX_FALLBACK=soul` env var).
+- Pytest tests: `tests/test_redline_generator.py` (11 test), `tests/test_critic_filters.py` (6 test).
+
+### Changed
+- `/relazione-review` ora snapshot baseline in `.session/redline/baseline.md` e attiva `redline.enabled=true`.
+- `/relazione-approve` ora archivia la baseline in `.session/redline/baselines/<timestamp>.md` e disattiva il redline.
+
+### Notes & Known Limitations
+- pandoc 3.x ha rimosso l'estensione `markdown+critic_markup`. Per workaround usiamo `scripts/_critic-preprocess.py` che converte CriticMarkup → bracketed-span syntax prima di pandoc.
+- **DOCX redline**: i cambiamenti vengono emessi come `w:strike` (cancellato) + `w:u` (inserito) — formattazione visiva equivalente a track-changes, ma NON sono "Revisioni" native di Word con Accept/Reject. Per native `w:ins`/`w:del` servirebbe un percorso non-pandoc (futuro).
+- EPUB e audiobook esplicitamente esclusi dal redline (formati audio).
+- Comportamento bytes-identico al pre-feature quando `--redline` non è passato e session non è in `in-review`.
+
 ## 2.5.1 — 2026-05-06
 
 Comando di uscita pulita.
