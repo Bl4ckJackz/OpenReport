@@ -317,6 +317,19 @@
         "secondary": {"type": "string", "enum": ["italiano", "inglese"]},
         "glossary_ref": {"type": "string"}
       }
+    },
+    "redline": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Track-changes redline state. Abilitato da /relazione-review, disabilitato da /relazione-approve.",
+      "properties": {
+        "enabled": {"type": "boolean", "default": false},
+        "baseline": {"type": "string", "enum": ["backup", "approved", "imported"]},
+        "baseline_path": {"type": "string"},
+        "baseline_ref": {"type": "string", "format": "date-time"},
+        "mode": {"type": "string", "enum": ["word", "sentence"], "default": "word"}
+      },
+      "required": ["enabled"]
     }
   }
 }
