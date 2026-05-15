@@ -95,3 +95,20 @@ def test_paragraph_30pct_changed_keeps_granular_diff(tmp_path, repo_root, python
     text = out.read_text(encoding="utf-8")
     # Only ~10% changed: granular diff should mark just the changed word
     assert "{--epsilon--}" in text or "{~~epsilon~>NUOVO~~}" in text
+
+
+# --- A4: Sentence-mode fallback ---
+
+def test_sentence_mode_does_not_emit_intra_sentence_spans(tmp_path, repo_root, python):
+    baseline = tmp_path / "b.md"
+    current = tmp_path / "c.md"
+    baseline.write_text("Frase uno. Frase due originale.\n", encoding="utf-8")
+    current.write_text("Frase uno. Frase due modificata.\n", encoding="utf-8")
+    out = tmp_path / "out.md"
+    _run(python, repo_root, baseline, current, out, mode="sentence")
+    text = out.read_text(encoding="utf-8")
+    # Sentence mode: entire changed sentence is deleted + inserted (no intra-sentence spans)
+    assert "{--Frase due originale.--}" in text
+    assert "{++Frase due modificata.++}" in text
+    assert "{--originale--}" not in text
+    assert "{++modificata++}" not in text

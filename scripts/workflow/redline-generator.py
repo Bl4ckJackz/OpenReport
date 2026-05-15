@@ -13,6 +13,7 @@ TOKEN_RE = re.compile(r"(\s+|[^\s\w]|\w+)")
 SUBSTITUTION_MAX_TOKENS = 8
 BLOCK_REWRITE_THRESHOLD = 0.7
 PARAGRAPH_SPLIT_RE = re.compile(r"(\n\s*\n)")
+SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
 
 
 def tokenize(text: str) -> list[str]:
@@ -39,6 +40,28 @@ def diff_to_critic(baseline_tokens: list[str], current_tokens: list[str]) -> str
             else:
                 out.append(f"{{--{old}--}}{{++{new}++}}")
     return "".join(out)
+
+
+def _diff_paragraph_sentence(b_text: str, c_text: str) -> str:
+    b_sents = SENTENCE_SPLIT_RE.split(b_text)
+    c_sents = SENTENCE_SPLIT_RE.split(c_text)
+    sm = difflib.SequenceMatcher(a=b_sents, b=c_sents, autojunk=False)
+    out: list[str] = []
+    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+        if tag == "equal":
+            out.extend(c_sents[j1:j2])
+        elif tag == "insert":
+            out.extend(f"{{++{s}++}}" for s in c_sents[j1:j2])
+        elif tag == "delete":
+            out.extend(f"{{--{s}--}}" for s in b_sents[i1:i2])
+        elif tag == "replace":
+            for b_s, c_s in zip(b_sents[i1:i2], c_sents[j1:j2]):
+                out.append(f"{{--{b_s}--}}{{++{c_s}++}}")
+            extra_b = b_sents[i1 + (j2 - j1) : i2]
+            extra_c = c_sents[j1 + (i2 - i1) : j2]
+            out.extend(f"{{--{s}--}}" for s in extra_b)
+            out.extend(f"{{++{s}++}}" for s in extra_c)
+    return " ".join(out)
 
 
 def _diff_paragraph(b_text: str, c_text: str) -> str:
@@ -78,7 +101,10 @@ def generate(baseline_path: str, current_path: str, out_path: str, mode: str = "
                 out_parts.append(f"{{--{p}--}}")
         elif tag == "replace":
             for b_para, c_para in zip(b_paras[i1:i2], c_paras[j1:j2]):
-                out_parts.append(_diff_paragraph(b_para, c_para))
+                if mode == "sentence":
+                    out_parts.append(_diff_paragraph_sentence(b_para, c_para))
+                else:
+                    out_parts.append(_diff_paragraph(b_para, c_para))
             extra_b = b_paras[i1 + (j2 - j1) : i2]
             extra_c = c_paras[j1 + (i2 - i1) : j2]
             for p in extra_b:
