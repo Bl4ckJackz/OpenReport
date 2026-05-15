@@ -206,7 +206,14 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     stats = generate(args.baseline, args.current, args.output, mode=args.mode, max_spans=args.max_spans)
     if args.verbose:
-        print(f"[redline] mode={stats['mode']} baseline={stats['baseline_tokens']} current={stats['current_tokens']}", file=sys.stderr)
+        print(
+            f"[redline] mode={stats['mode']} "
+            f"baseline_tokens={stats['baseline_tokens']} "
+            f"current_tokens={stats['current_tokens']} "
+            f"ins={stats['ins_count']} del={stats['del_count']} sub={stats['sub_count']} "
+            f"total_spans={stats['total_spans']} max_spans={args.max_spans}",
+            file=sys.stderr,
+        )
     return 0
 
 

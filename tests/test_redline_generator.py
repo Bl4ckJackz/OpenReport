@@ -181,6 +181,27 @@ def test_source_braces_escaped_to_avoid_pandoc_interpretation(tmp_path, repo_roo
     assert "\\{++" in text or "\\{ ++" in text
 
 
+# --- A8: Verbose telemetry on stderr ---
+
+def test_verbose_telemetry_contains_all_stats_fields(tmp_path, repo_root, python):
+    baseline = tmp_path / "b.md"
+    current = tmp_path / "c.md"
+    baseline.write_text("Il vecchio testo.\n", encoding="utf-8")
+    current.write_text("Il nuovo testo.\n", encoding="utf-8")
+    out = tmp_path / "out.md"
+    result = _run_verbose(python, repo_root, baseline, current, out)
+    stderr = result.stderr
+    # All structured fields must appear in the --verbose stderr line
+    assert "mode=" in stderr
+    assert "baseline_tokens=" in stderr
+    assert "current_tokens=" in stderr
+    assert "ins=" in stderr
+    assert "del=" in stderr
+    assert "sub=" in stderr
+    assert "total_spans=" in stderr
+    assert "max_spans=" in stderr
+
+
 def test_escalation_word_to_sentence_when_cap_exceeded(tmp_path, repo_root, python):
     baseline = tmp_path / "b.md"
     current = tmp_path / "c.md"
