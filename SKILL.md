@@ -87,6 +87,10 @@ Le righe `→ Next:` devono essere l'**ultima** comunicazione del turno (dopo l'
 | **Layout** | `layout-coherence.py` | `scripts/quality/layout-coherence.py` | Step 6.7 — verifica ordinamento blocchi (BLOCCANTE) |
 | **Approval** | `audit-trail.py` | `scripts/workflow/audit-trail.py` | Step 9 — append-only audit log |
 | | `watermark-pdf.py` | `scripts/export/watermark-pdf.py` | Step 9 — togli/aggiungi DRAFT/IN-REVIEW |
+| **Usabilità** | `live-preview.sh` | `scripts/workflow/live-preview-draft.sh` | Live preview HTML draft durante editing |
+| | `progress-tracker.py` | `scripts/workflow/progress-tracker.py` | Tracking avanzamento sessione |
+| | `auto-save.sh` | `scripts/workflow/auto-save.sh` | Auto-save state periodico |
+| | `redline-generator.py` | `scripts/workflow/redline-generator.py` | track-changes Word-style su HTML/PDF/DOCX |
 
 ## Flow
 
@@ -583,6 +587,9 @@ Lista completa di anti-pattern e regole bloccanti caricabile on-demand. Le regol
 | `/relazione-diff` | `~/.claude/commands/relazione-diff.md` | Diff tra due iterazioni |
 | `/relazione-approve` | `~/.claude/commands/relazione-approve.md` | **Step 9** — promuove ready-for-approval → approved → completed |
 | `/relazione-import-feedback` | `~/.claude/commands/relazione-import-feedback.md` | Importa feedback (es. da reject) e torna in-progress |
+| `/relazione-redline` | `~/.claude/commands/relazione-redline.md` | Vista redline on-demand (track-changes vs baseline) senza alterare lo status |
+
+Dalla v2.6.0, `/relazione-review` attiva automaticamente il **redline**: snapshot baseline + flag in session-state. Tutti gli export successivi producono file `*-redline.*` con inserimenti sottolineati e cancellazioni barrate. `/relazione-approve` archivia la baseline e disattiva il redline.
 
 ## Templates
 
