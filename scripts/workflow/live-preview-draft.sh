@@ -255,6 +255,9 @@ POSTBAR
   printf '<meta http-equiv="refresh" content="3">\n' >> "$HTML"
 }
 
+# Pre-seed the state file with the CLI diff baseline (so the watch loop starts in sync)
+printf '%s' "$DIFF_BASELINE" > "$WORK_DIR/_diff_baseline.txt"
+
 render
 URL="http://localhost:$PORT/.preview-$NAME.html"
 echo "[OK] Live preview: $URL"
@@ -275,8 +278,9 @@ session = sys.argv[4]
 name = sys.argv[5]
 state_path = os.path.join(work_dir, "_diff_baseline.txt")
 
+# State file is pre-seeded by the shell before launch; only create if missing
 if not os.path.exists(state_path):
-    open(state_path, "w").write(os.environ.get("DIFF_BASELINE", ""))
+    open(state_path, "w").write("")
 
 os.chdir(work_dir)
 
